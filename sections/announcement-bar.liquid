@@ -1,0 +1,157 @@
+{{ 'section-announcement-bar.min.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.enable %}
+
+  {% assign social_links = blank %}
+  {% if section.settings.social-enable %}
+    {% capture social_links %}
+      {% render 'social-links' %}
+    {% endcapture %}
+  {% endif %}
+
+  {% if section.settings.message_text != empty or social_links != blank %}
+
+    <style>
+      .notification-bar{
+        background-color: {{ section.settings.notification-bar--background-color }};
+        color: {{ section.settings.notification-bar--text-color }};
+      }
+
+      .notification-bar a{
+        color: {{ section.settings.notification-bar--text-color }};
+      }
+    </style>
+
+    <div class="notification-bar custom-font{% if section.settings.message_text != blank %} notification-bar--with-text{% endif %}{% if social_links != blank %} notification-bar--with-icons{% endif %}">
+      {% if section.settings.message_text != blank and social_links != blank %}
+        <div class="notification-bar__empty-div">
+        </div>
+      {% endif %}
+
+      {% if section.settings.message_text != blank %}
+        <div class="notification-bar__message">
+        {% if section.settings.message_link != blank %}
+          <a href="{{ section.settings.message_link }}">
+            <p>{{ section.settings.message_text | escape }}</p>
+          </a>
+        {% else %}
+          <p>{{ section.settings.message_text | escape }}</p>
+        {% endif %}
+        </div>
+      {% endif %}
+
+      {% if social_links != blank %}
+        <div class="header-social-links">
+          {{ social_links }}
+        </div>
+      {% endif %}
+    </div>
+
+  {% endif %}
+
+{% endif %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Announcement bar",
+        "de": "Ankündigungsleiste",
+        "es": "Barra de anuncios",
+        "fr": "Barre d'annonce",
+        "pt-PT": "Barra de anúncio"
+    },
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "enable",
+            "default": true,
+            "label": {
+                "en": "Show announcement",
+                "de": "Ankündigung anzeigen",
+                "es": "Mostrar anuncio",
+                "fr": "Afficher l'annonce",
+                "pt-PT": "Mostrar anúncio"
+            }
+        },
+        {
+            "type": "text",
+            "id": "message_text",
+            "label": {
+                "en": "Announcement text",
+                "de": "Ankündigungstext",
+                "es": "Texto del anuncio",
+                "fr": "Texte de l'annonce",
+                "pt-PT": "Texto do anúncio"
+            },
+            "default": {
+                "en": "Announce something here",
+                "de": "Kündigen Sie hier etwas an",
+                "es": "Anuncie algo aquí",
+                "fr": "Annoncez quelque chose ici",
+                "pt-PT": "Anunciar algo aqui"
+            }
+        },
+        {
+            "type": "url",
+            "id": "message_link",
+            "label": {
+                "en": "Announcement link",
+                "de": "Ankündigungslink",
+                "es": "Enlace del anuncio",
+                "fr": "Lien d'annonce",
+                "pt-PT": "Ligação do anúncio"
+            },
+            "info": {
+                "en": "Optional",
+                "de": "Optional",
+                "es": "Opcional",
+                "fr": "Facultatif",
+                "pt-PT": "Opcional"
+            }
+        },
+        {
+            "type": "color",
+            "id": "notification-bar--background-color",
+            "label": {
+                "en": "Announcement background",
+                "de": "Ankündigungshintergrund",
+                "es": "Fondo del anuncio",
+                "fr": "Contexte de l'annonce",
+                "pt-PT": "Fundo do anúncio"
+            },
+            "default": "#e3e3e3"
+        },
+        {
+            "type": "color",
+            "id": "notification-bar--text-color",
+            "label": {
+                "en": "Announcement text",
+                "de": "Ankündigungstext",
+                "es": "Texto del anuncio",
+                "fr": "Texte de l'annonce",
+                "pt-PT": "Texto do anúncio"
+            },
+            "default": "#333333"
+        },
+        {
+            "type": "checkbox",
+            "id": "social-enable",
+            "label": {
+                "en": "Show social media icons on desktop",
+                "de": "Social-Media-Symbole auf Desktop aktivieren",
+                "es": "Habilitar iconos de redes sociales en el escritorio",
+                "fr": "Activez les icônes des réseaux sociaux sur votre bureau",
+                "pt-PT": "Ativar ícones de redes sociais no ambiente de trabalho"
+            },
+            "default": true,
+            "info": {
+                "en": "Edit your social media settings and accounts in Theme settings",
+                "de": "Bearbeiten Sie Ihre sozialen Einstellungen und Konten in den Theme-Einstellungen.",
+                "es": "Edite sus ajustes de redes sociales y cuentas en la configuración del tema",
+                "fr": "Modifiez les paramètres de vos médias sociaux et de vos comptes dans les paramètres du Thème",
+                "pt-PT": "Edite as suas configurações e contas sociais nas configurações do Tema"
+            }
+        }
+    ]
+}
+{% endschema %}

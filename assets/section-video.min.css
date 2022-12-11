@@ -1,0 +1,7 @@
+/* *****
+This is a CSS partial, minified file. It is referenced by the theme by default in theme.liquid.
+If you would like to edit this code we recommend swapping to the un-minified version.
+For full details and instructions please see our documentation:
+https://support.weareeight.com/hc/en-us/articles/360020366578-Un-minified-CSS-Javascript
+***** */
+.homepage-section--video-wrapper .homepage-sections-wrapper,.homepage-section--video-wrapper .homepage-sections-wrapper--accent,.homepage-section--video-wrapper .homepage-sections-wrapper--dark,.homepage-section--video-wrapper .homepage-sections-wrapper--light,.homepage-section--video-wrapper .homepage-sections-wrapper--white{padding:0 0 50px 0}@media screen and (min-width:992px){.video-section.video-width--75 .wrapper{width:75%;margin:0 auto}.video-section.video-width--50 .wrapper{width:50%;margin:0 auto}}.video-section.video-width--100{padding:0;width:100vw}.video-section .embed-container{z-index:1}.embed-container{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%}.embed-container embed,.embed-container iframe,.embed-container object{position:absolute;top:0;left:0;width:100%;height:100%}@media screen and (max-width:767px){.video-overlay{display:none}}

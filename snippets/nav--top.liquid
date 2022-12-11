@@ -1,0 +1,58 @@
+
+{% comment %} This nav have no mega menu option and is used only for the top bar navigation {% endcomment %}
+<ul class="nav {{ class }}">
+  {% for link in linklists[nav--top].links %}
+    {% if link.links != blank %}
+
+      <li class="dropdown">
+        <div class="mega-menu--dropdown-wrapper">
+          <a
+            class="dropdown-envy-toggle alt-focus header-link"
+            data-delay="200"
+            href="{{ link.url }}"
+            aria-expanded="false"
+          >
+            <span class="nav-label">{{ link.title | escape }}</span>
+            <i data-feather="chevron-down"></i>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu--standard">
+            {% for sub_link in link.links %}
+              {% if sub_link.levels > 0 %}
+                <li class="dropdown-submenu">
+                  <a
+                    class="dropdown-submenu__link"
+                    href="{{ sub_link.url }}"
+                    aria-expaneded="false"
+                  >
+                    {{ sub_link.title | escape }}
+                    <svg class="feather feather-chevron-right" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </a>
+                  <ul class="dropdown-menu">
+                    {% for sub_sub_link in sub_link.links %}
+                      <li>
+                        <a class="dropdown-submenu__link alt-focus" href="{{ sub_sub_link.url }}">{{ sub_sub_link.title | escape }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              {% else %}
+                <li>
+                  <a class="dropdown-submenu__link alt-focus" href="{{ sub_link.url }}">{{ sub_link.title | escape }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </li>
+
+    {% else %}
+
+      <li {% if link.active %}class="site-nav--active"{% endif %}>
+        <a href="{{ link.url }}" class="header-link alt-focus">{{ link.title }}</a>
+      </li>
+
+    {% endif %}
+
+  {% endfor %}
+</ul>

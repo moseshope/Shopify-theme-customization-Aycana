@@ -1,0 +1,11 @@
+<select name="id" id="ProductSelect-{{ section.id }}" data-section="{{ section.id }}" class="form-control original-select product-form__variants no-js">
+  {% for variant in variants %}
+    {% if variant.available %}
+      <option {% if variant == current_variant %} selected {% endif %} value="{{ variant.id }}">
+        {{ variant.title }} - <span class="money">{{ variant.price | money }}</span>
+      </option>
+    {% else %}
+      <option disabled>{{ variant.title }} - {{ 'products.product.sold_out' | t }}</option>
+    {% endif %}
+  {% endfor %}
+</select>

@@ -1,0 +1,7 @@
+/* *****
+This is a CSS partial, minified file. It is referenced by the theme by default in theme.liquid.
+If you would like to edit this code we recommend swapping to the un-minified version.
+For full details and instructions please see our documentation:
+https://support.weareeight.com/hc/en-us/articles/360020366578-Un-minified-CSS-Javascript
+***** */
+.image-bar--single-image{text-align:center}.image-bar--single-image .img-responsive{display:inline-block}.image-bar--title{text-align:center}.image-bar--description p{text-align:center}@media screen and (max-width:767px){.image-bar>div{margin-bottom:3rem}.image-bar>div:last-child{margin-bottom:0}}.homepage-section--image-gallery-wrapper .icon--placeholder{max-height:200px}.image-bar__content img{height:auto;width:100%}

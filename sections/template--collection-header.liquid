@@ -1,0 +1,154 @@
+<div data-wetheme-section-type="template--collection-header" data-wetheme-section-id="{{ section.id }}">
+
+{% assign has_collection_image = false %}
+
+{% for block in section.blocks %}
+  {% case block.type %}
+
+    {% when 'collection-image' %}
+
+      {% if collection.image %}
+        {% assign has_collection_image = true %}
+          
+        <div class="collection-image-wrapper" {{ block.shopify_attributes }}>
+          {% if block.settings.collection_image_size == 'original' %}
+            {% render 'responsive-image' with collection.image, alt: collection.image.alt %}
+          {% else %}
+            <style>
+              {% capture selector %}.collection-image-wrapper .img{% endcapture %}
+              {% render 'responsive-background-image' with collection.image, selector: selector %}
+
+              .collection-image-wrapper .img {
+                  background-position: center;
+                  background-repeat: no-repeat;
+                  background-size: cover;
+                  height: {{ block.settings.collection_image_size }};
+              }
+            </style>
+            <div class="img"></div>
+            {% endif %}
+        </div>
+      {% endif %}
+
+    {% when 'collection-title' %}
+
+      <div class="{{ collection.handle }} collection-title" {{ block.shopify_attributes }}>
+        <div class="title-bar custom-font collection-header{% if collection.image and has_collection_image %} collection-header--with-image{% endif %}">
+        {% if collection.handle == 'all' %}
+          <h2>{{ 'products.general.products_title' | t }}</h2>
+        {% else %}
+          <h2>{{ collection.title }}</h2>
+        {% endif %}
+        <div class="clear"></div>
+        </div>
+      </div>
+
+    {% when 'collection-description' %}
+
+      {% if collection.description != empty %}
+          <div class="description-content" {{ block.shopify_attributes }}>{{ collection.description }}</div>
+      {% endif %}
+  {% endcase %}
+{% endfor %}
+
+</div>
+
+{% schema %}
+{
+  "name": {
+    "en": "Collection header"
+  },
+  "class": "collection-header-wrapper",
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "name": "Collection image",
+      "type": "collection-image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "This block determines the position of the collection image."
+        },
+        {
+            "type": "select",
+            "id": "collection_image_size",
+            "label": {
+                "en": "Collection image size",
+                "de": "Größe des Kollektionsbilds",
+                "es": "Tamaño de la imagen de la colección",
+                "fr": "Taille de l'image de la collection",
+                "pt-PT": "Tamanho da imagem da coleção"
+            },
+            "options": [
+              {
+                "value": "20vh",
+                "label": {
+                    "en": "Small",
+                    "de": "Klein",
+                    "es": "Pequeño",
+                    "fr": "Petite",
+                    "pt-PT": "Pequeno"
+                }
+              },
+              {
+                "value": "30vh",
+                "label": {
+                    "en": "Medium",
+                    "de": "Mittel",
+                    "es": "Mediano",
+                    "fr": "Moyenne",
+                    "pt-PT": "Médio"
+                }
+              },
+              {
+                "value": "40vh",
+                "label": {
+                    "en": "Large",
+                    "de": "Groß",
+                    "es": "Grande",
+                    "fr": "Grande",
+                    "pt-PT": "Grande"
+                }
+              },
+              {
+                "value": "original",
+                "label": {
+                    "en": "Original",
+                    "de": "Original",
+                    "es": "Original",
+                    "fr": "D'origine",
+                    "pt-PT": "Original"
+                }
+              }
+            ],
+            "default": "original"
+        }
+      ]
+    },
+    {
+        "name": "Collection title",
+        "type": "collection-title",
+        "limit": 1,
+        "settings": [
+          {
+              "type": "paragraph",
+              "content": "This block determines the position of the collection title."
+          }
+        ]
+    },
+    {
+        "name": "Collection description",
+        "type": "collection-description",
+        "limit": 1,
+        "settings": [
+          {
+              "type": "paragraph",
+              "content": "This block determines the position of the collection description."
+          }
+        ]
+    }
+  ]
+}
+{% endschema %}

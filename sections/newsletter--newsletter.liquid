@@ -1,0 +1,201 @@
+{{ 'section-newsletter.min.css' | asset_url | stylesheet_tag }}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+{% assign title = false %}
+{% if section.settings.title != blank or
+  section.settings.subheading != blank or
+  section.settings.newsletter_description != blank %}
+  {% assign title = true %}
+{% endif %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-sm-6 newsletter__item">
+        <div class="newsletter__title wow fadeInUp">
+          {% if title %}
+            {% if section.settings.subheading != blank %}
+              <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+            {% endif %}
+            {% if section.settings.title != blank %}
+              <h2 class="wow fadeIn{% if section.settings.subheading != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+            {% endif %}
+            {% if section.settings.newsletter_description != blank %}
+              {{ section.settings.newsletter_description }}
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="newsletter__item col-12{% if title %} col-sm-5 offset-sm-1{% endif %}">
+        <div class="newsletter_form wow fadeIn">
+          {% render 'newsletter-form' %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+    "name": {
+        "en": "Newsletter",
+        "de": "Newsletter",
+        "es": "Boletín de noticias",
+        "fr": "Bulletin d'information",
+        "pt-PT": "Newsletter"
+    },
+    "class": "homepage-section--newsletter-wrapper",
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "light",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "White",
+                        "de": "Weiß",
+                        "es": "Blanco",
+                        "fr": "Blanc",
+                        "pt-PT": "Branco"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ],
+            "info": {
+                "en": "Set your color schemes in 'Theme settings' > 'Colors'",
+                "de": "Legen Sie Ihre Farbschemata in 'Themeneinstellungen' > 'Farben' fest",
+                "es": "Configurar las combinaciones de color en 'Configuración del tema' > 'Colores'",
+                "fr": "Définissez vos jeux de couleurs dans « Paramètres du thème » > « Couleurs »",
+                "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
+            }
+        },
+        {
+            "type": "text",
+            "id": "subheading",
+            "label": {
+              "en": "Subheading",
+              "de": "Unterüberschrift",
+              "es": "Subencabezado",
+              "fr": "Sous-rubrique",
+              "pt-PT": "Subtítulo"
+            }
+        },
+        {
+            "id": "title",
+            "type": "text",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Join our Mailing List",
+                "de": "Melden Sie sich bei unserer Mailingliste an",
+                "es": "Únase a nuestra lista de correo electrónico",
+                "fr": "Inscrivez-vous à notre liste d'envoi",
+                "pt-PT": "Aderir à nossa Lista de E-mails"
+            }
+        },
+        {
+            "type": "richtext",
+            "id": "newsletter_description",
+            "label": {
+              "en": "Text",
+              "de": "Text",
+              "es": "Texto",
+              "fr": "Texte",
+              "pt-PT": "Texto"
+            },
+            "default": {
+              "en": "<p>Describe the benefits of your newsletter</p>",
+              "de": "<p>Beschreiben Sie die Vorteile Ihres Newsletters</p>",
+              "es": "<p>Describe las ventajas de tu boletín de noticias</p>",
+              "fr": "<p>Décrivez les avantages de votre newsletter</p>",
+              "pt-PT": "<p>Descreva os benefícios do seu boletim informativo</p>"
+            }
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Newsletter",
+                "de": "Newsletter",
+                "es": "Boletín de noticias",
+                "fr": "Bulletin d'information",
+                "pt-PT": "Newsletter"
+            },
+            "category": {
+                "en": "Newsletter",
+                "de": "Newsletter",
+                "es": "Boletín de noticias",
+                "fr": "Bulletin d'information",
+                "pt-PT": "Newsletter"
+            }
+        }
+    ],
+    "templates": [
+        "index",
+        "collection",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

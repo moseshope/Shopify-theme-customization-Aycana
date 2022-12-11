@@ -1,0 +1,218 @@
+{{ 'section-video.min.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.width_classes != 'video-width--100' %}
+  <section class="homepage-sections-wrapper homepage-sections-wrapper--white">
+{% endif %}
+
+    {% if section.settings.title != blank or section.settings.subheading != blank %}
+    <div class="container video--text-header">
+        <div class="row">
+            <div class="col">
+                <div class="title-bar custom-font">
+                {% if section.settings.subheading != blank %}
+                    <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+                {% endif %}
+                {% if section.settings.title != blank %}
+                    <h2 class="wow fadeIn{% if section.settings.subheading != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div
+        class="video-section--{{ section.id }} {% if section.settings.width_classes != 'video-width--100' %}container{% endif %} video-section {{ section.settings.width_classes }}"
+        data-wetheme-section-type="video--video"
+        data-wetheme-section-id="{{ section.id }}"
+    >
+        <div class="wrapper">
+            <div class="embed-container">
+                <wetheme-video
+                    hero="false"
+                    video-type="{{ section.settings.url.type }}"
+                    url="{{ section.settings.url.id }}"
+                    autoplay="{% if section.settings.autoplay %}true{% else %}false{% endif %}"
+                    loop="{% if section.settings.loop %}true{% else %}false{% endif %}"
+                    mute="{% if section.settings.mute %}true{% else %}false{% endif %}"
+                    data-vimeo-width="746"
+                >
+                </wetheme-video>
+            </div>
+        </div>
+    </div>
+
+{% if section.settings.width_classes != 'video-width--100' %}
+</section>
+{% endif %}
+
+{% schema %}
+{
+    "name": {
+        "en": "Video",
+        "de": "Video",
+        "es": "Vídeo",
+        "fr": "Vidéo",
+        "pt-PT": "Vídeo"
+    },
+    "class": "homepage-section--video-wrapper wow fadeIn",
+    "settings": [
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": {
+            "en": "Subheading",
+            "de": "Unterüberschrift",
+            "es": "Subencabezado",
+            "fr": "Sous-rubrique",
+            "pt-PT": "Subtítulo"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+              "en": "Heading",
+              "de": "Überschrift",
+              "es": "Encabezado",
+              "fr": "Rubrique",
+              "pt-PT": "Título"
+          }
+        },
+        {
+            "id": "url",
+            "type": "video_url",
+            "label": {
+                "en": "Video URL",
+                "de": "Video-URL",
+                "es": "URL del vídeo",
+                "fr": "URL de la vidéo",
+                "pt-PT": "URL do Vídeo"
+            },
+            "accept": [
+                "youtube",
+                "vimeo"
+            ],
+            "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+        },
+        {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": {
+                "en": "Autoplay",
+                "de": "Automatische Wiedergabe",
+                "es": "Reproducción automática",
+                "fr": "Lecture automatique",
+                "pt-PT": "Reprodução Automática"
+            },
+            "info": {
+                "en": "Video will be muted and some devices may prevent autoplay.",
+                "de": "Das Video wird stumm geschaltet, und einige Geräte verhindern möglicherweise die automatische Wiedergabe.",
+                "es": "El vídeo se silenciará y algunos dispositivos puede que eviten la reproducción automática.",
+                "fr": "La vidéo sera mise en sourdine et certains appareils peuvent empêcher la lecture automatique.",
+                "pt-PT": "O vídeo será repoduzido sem som e alguns dispositivos poderão impedir a auto-repodução."
+            },
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "loop",
+            "label": {
+                "en": "Loop",
+                "de": "Schleife",
+                "es": "En bucle",
+                "fr": "Boucle",
+                "pt-PT": "Repetição"
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "mute",
+            "label": {
+                "en": "Mute",
+                "de": "Stummschalten",
+                "es": "Silenciar",
+                "fr": "Muet",
+                "pt-PT": "Silenciar"
+            },
+            "default": false
+        },
+        {
+            "type": "select",
+            "id": "width_classes",
+            "label": {
+                "en": "Width",
+                "de": "Breite",
+                "es": "Ancho",
+                "fr": "Largeur",
+                "pt-PT": "Largura"
+            },
+            "default": "video-width--100",
+            "options": [
+                {
+                    "value": "video-width--100",
+                    "label": {
+                        "en": "100%",
+                        "de": "100 %",
+                        "es": "100%",
+                        "fr": "100 %",
+                        "pt-PT": "100 %"
+                    }
+                },
+                {
+                    "value": "video-width--75",
+                    "label": {
+                        "en": "75%",
+                        "de": "75 %",
+                        "es": "75%",
+                        "fr": "75 %",
+                        "pt-PT": "75 %"
+                    }
+                },
+                {
+                    "value": "video-width--50",
+                    "label": {
+                        "en": "50%",
+                        "de": "50 %",
+                        "es": "50%",
+                        "fr": "50 %",
+                        "pt-PT": "50 %"
+                    }
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Video",
+                "de": "Video",
+                "es": "Vídeo",
+                "fr": "Vidéo",
+                "pt-PT": "Vídeo"
+            },
+            "category": {
+                "en": "Video",
+                "de": "Video",
+                "es": "Vídeo",
+                "fr": "Vidéo",
+                "pt-PT": "Vídeo"
+            }
+        }
+    ],
+    "templates": [
+        "index",
+        "collection",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

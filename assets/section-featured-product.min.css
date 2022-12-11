@@ -1,0 +1,7 @@
+/* *****
+This is a CSS partial, minified file. It is referenced by the theme by default in theme.liquid.
+If you would like to edit this code we recommend swapping to the un-minified version.
+For full details and instructions please see our documentation:
+https://support.weareeight.com/hc/en-us/articles/360020366578-Un-minified-CSS-Javascript
+***** */
+.homepage-sections--indiv-product-slider-variant{margin-top:20px}.product--featured-product .product-description-main-wrapper h1{margin-top:0;font-size:2rem}.product--featured-product .swatches-wrapper{padding:0 16px}.product--featured-product .homepage-headline-text__link{font-size:var(--product-titles);color:var(--color-primary);display:flex}@media screen and (max-width:767px){.product--featured-product .homepage-headline-text__link{padding-top:15px}}.product--featured-product .homepage-headline-text__link:hover{color:var(--color-primary)}.product--featured-product button#purchase{min-width:25%}.product--featured-product .original-select{margin:0 16px}.product-images{position:relative}.product-images.loading .featured-image-div{min-height:400px}.indiv-product .hp-title{padding-top:15px;text-align:center}.homepage-sections--indiv-product-slider{position:relative}.homepage-sections--indiv-product-slider .flex-control-nav{width:auto;right:0;bottom:0;z-index:10;position:inherit;padding-top:20px}.homepage-sections--indiv-product-slider img{width:100%}

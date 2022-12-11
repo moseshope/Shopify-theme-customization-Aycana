@@ -1,0 +1,7 @@
+/* *****
+This is a CSS partial, minified file. It is referenced by the theme by default in theme.liquid.
+If you would like to edit this code we recommend swapping to the un-minified version.
+For full details and instructions please see our documentation:
+https://support.weareeight.com/hc/en-us/articles/360020366578-Un-minified-CSS-Javascript
+***** */
+.homepage-collection-link{padding-top:0;text-align:center}.homepage-collection-link a{transition:opacity .2s ease-in-out;-webkit-transition:opacity .2s ease-in-out;-o-transition:opacity .2s ease-in-out}.homepage-collection-link a:before{content:"";display:block;position:absolute;top:0;left:0;right:0;bottom:0}.template-index .collection-grid .indiv-collection-grid-homepage{margin-bottom:20px}.homepage-collection-grid-inner .grid-image{display:table;table-layout:fixed;width:100%}.homepage-collection-grid-inner .grid-image .grid-image--centered{display:table-cell;vertical-align:middle;text-align:center}.homepage-collection-grid-inner .grid-image .grid-image--centered img{display:inline-block;max-width:100%}

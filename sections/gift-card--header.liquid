@@ -1,0 +1,74 @@
+<header role="banner" id="header">
+  <a href="{{ shop.url }}" class="logo">
+    {% if section.settings.logo %}
+      {% assign logoWidth = section.settings.logo_width | append: 'x' | escape %}
+      {% capture alt %}{{ section.settings.logo.alt | default: shop.name }}{% endcapture %}
+      <img
+        src="{{ section.settings.logo | img_url: logoWidth }}"
+        alt="{{ alt }}"
+        itemprop="logo"
+      >
+    {% else %}
+      {{ shop.name }}
+    {% endif %}
+  </a>
+  
+      
+</header>
+
+{% schema %}
+{
+  "name": {
+    "en": "Header",
+    "de": "Überschrift",
+    "es": "Encabezado",
+    "fr": "En-tête",
+    "pt-PT": "Cabeçalho"
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": {
+        "en": "Header",
+        "de": "Überschrift",
+        "es": "Encabezado",
+        "fr": "En-tête",
+        "pt-PT": "Cabeçalho"
+      }
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": {
+        "en": "Logo image",
+        "de": "Logobild",
+        "es": "Imagen del logotipo",
+        "fr": "Image du logo",
+        "pt-PT": "Imagem do logótipo"
+      }
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 300,
+      "step": 10,
+      "unit": {
+        "en": "px",
+        "de": "px",
+        "es": "px",
+        "fr": "px",
+        "pt-PT": "px"
+      },
+      "label": {
+      "en": "Preferred width",
+      "de": "Bevorzugte Breite",
+      "es": "Ancho preferido",
+      "fr": "Largeur préférée",
+      "pt-PT": "Largura preferida"
+      },
+      "default": 160
+    }
+  ]
+}
+{% endschema %}

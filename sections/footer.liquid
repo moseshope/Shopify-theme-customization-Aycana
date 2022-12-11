@@ -1,0 +1,547 @@
+{% assign footer_item_width = '' %}
+{% case section.blocks.size %}
+{% when 1 %}
+	{% assign footer_item_width = 'col-md-12 col-sm-12' %}
+{% when 2 %}
+	{% assign footer_item_width = 'col-md-6 col-sm-12' %}
+{% when 3 %}
+	{% assign footer_item_width = 'col-md-4 col-sm-12' %}
+{% when 4 %}
+    {% assign footer_item_width = 'col-md-3 col-sm-12' %}
+{% endcase %}
+
+<footer data-wetheme-section-type="footer" data-wetheme-section-id="{{ section.id }}">
+	<div class="container">
+		<div class="row footer-alignment--{{ section.settings.alignment }}">
+
+			{% for block in section.blocks %}
+			{% if block.type == 'image' %}
+			<style>
+				.footer-image-id--{{ block.id }} img {
+					width: {{ block.settings.image_max_width }}%;
+				}
+			</style>
+			{% endif %}
+
+				{% case block.type %}
+
+					{% when 'menu' %}
+
+						{%- assign footer_linklist = block.settings.footer_linklist -%}
+						<div class="{{ footer_item_width }} links-footer footer-block--wrapper" {{ block.shopify_attributes }}>
+							<h3 class="type-subheading type-subheading--1">{{ block.settings.menu_title | escape }}</h3>
+
+        					{% if linklists[footer_linklist].links.size > 0 %}
+                            <nav>
+                                <ul>
+                                    {% for link in linklists[footer_linklist].links %}
+                                        <li {% if link.object.tags and link.object.tags.size > 0 %} class="children"{% endif %}>
+                                            <a href="{{link.url}}">{{link.title}}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </nav>
+							{% endif %}
+						</div>
+
+					{% when 'text' %}
+
+						<div class="{{ footer_item_width }} content-footer footer-block--wrapper" {{ block.shopify_attributes }}>
+							<h3 class="type-subheading type-subheading--1">{{ block.settings.title | escape }}</h3>
+							<div class="rte footer-article">{{ block.settings.richtext }}</div>
+						</div>
+
+					{% when 'newsletter' %}
+
+						<div class="{{ footer_item_width }} mailing-list-footer footer-block--wrapper" {{ block.shopify_attributes }}>
+							<h3 class="type-subheading type-subheading--1">{{ block.settings.menu_title | escape }}</h3>
+							{% if block.settings.footer_newsletter_description != empty %}
+								<div class="rte">{{ block.settings.footer_newsletter_description }}</div>
+							{% endif %}
+
+							{% render 'newsletter-form' %}
+
+						</div>
+
+					{% when 'social' %}
+
+						<div class="{{ footer_item_width }} footer-block--wrapper" {{ block.shopify_attributes }}>
+							<h3 class="type-subheading type-subheading--1">{{ block.settings.menu_title | escape }}</h3>
+							<div class="footer__social-icons">
+								{% render 'social-links' %}
+							</div>
+						</div>
+
+						{% when 'image' %}
+
+							<div class="{{ footer_item_width }} footer-image-id--{{ block.id }} image-footer footer-block--wrapper" {{ block.shopify_attributes }}>
+
+								{% if block.settings.title != '' %}
+									<h3 class="type-subheading type-subheading--1">{{ block.settings.title }}</h3>
+								{% endif %}
+
+								{% if block.settings.image != blank %}
+									{%- assign img_url = block.settings.image | img_url: '600x' -%}
+								{% else %}
+									{%- assign img_url = '' -%}
+								{% endif %}
+								{% if block.settings.link != blank and img_url != blank %}
+									<a href="{{ block.settings.link }}">
+								{% elsif img_url != blank %}
+									<div class="image-bar__item">
+								{% else %}
+									<div class="image-bar__item">
+								{% endif %}
+								<div class="image-bar__content">
+									{% if img_url == blank %}
+										{{ 'image' | placeholder_svg_tag: 'icon icon--placeholder' }}
+									{% else %}
+										{% capture image_props %}style="max-width: {{ block.settings.image.width }}px"{% endcapture %}
+                                        {% capture alt %}{{ block.settings.image.alt }}{% endcapture %}
+										{% render 'responsive-image' with block.settings.image, props: image_props, alt: alt %}
+									{% endif %}
+								</div>
+								{% if block.settings.link != blank and img_url != blank %}
+									</a>
+								{% else %}
+									</div>
+								{% endif %}
+
+							</div>
+
+				{% endcase %}
+
+			{% endfor %}
+
+		</div>
+	</div>
+
+	<div class="bottom-footer">
+		<div class="container">
+			<div class="bottom-footer-row">
+                <div>
+                    <div class="footer-localization-selectors">
+                        {% render 'localization-form', enable_country_selector: section.settings.enable_country_selector, enable_locale_selector: section.settings.enable_locale_selector %}
+                    </div>
+
+                    {% if section.settings.show_methods_of_payment %}
+                        {% unless shop.enabled_payment_types == empty %}
+                            <ul id="footer-payment-methods" class="inline-list payment-icons">
+                                {% for type in shop.enabled_payment_types %}
+                                    <li>{{ type | payment_type_svg_tag: class:'payment-icon' }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endunless %}
+                    {% endif %}
+                </div>
+
+                <div class="copyright">
+                    <p>
+                        <a href="{{ routes.root_url }}">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</a> | {{ powered_by_link }}
+                    </p>
+               </div>
+			</div>
+		</div>
+	</div>
+
+</footer>
+
+{% schema %}
+{
+    "name": {
+        "en": "Footer",
+        "de": "Fußzeile",
+        "es": "Pie de página",
+        "fr": "Pied de page",
+        "pt-PT": "Rodapé"
+    },
+    "max_blocks": 4,
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "show_methods_of_payment",
+            "label": {
+                "en": "Payment icons",
+                "de": "Zahlungssymbole",
+                "es": "Iconos de pago",
+                "fr": "Icônes de paiement",
+                "pt-PT": "Ícones de pagamento"
+            },
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "alignment",
+            "label": {
+                    "en": "Alignment",
+                    "de": "Ausrichtung",
+                    "es": "Alineación",
+                    "fr": "Alignement",
+                    "pt-PT": "Alinhamento"
+            },
+            "default": "center",
+            "options": [
+                    {
+                        "value": "left",
+                        "label": {
+                            "en": "Left",
+                            "de": "Links",
+                            "es": "Izquierda",
+                            "fr": "Gauche",
+                            "pt-PT": "Esquerda"
+                        }
+                    },
+                    {
+                        "value": "center",
+                        "label": {
+                            "en": "Center",
+                            "de": "Mitte",
+                            "es": "Centro",
+                            "fr": "Centre",
+                            "pt-PT": "Centro"
+                        }
+                    }
+                ]
+        },
+        {
+            "type": "header",
+            "content": {
+                "en": "Country\/region selector",
+                "de": "Auswahl für Land\/Region",
+                "es": "Selector de país\/región",
+                "fr": "Sélecteur de pays\/région",
+                "pt-PT": "Seletor de país\/região"
+            },
+            "info": {
+                "en": "To add a country\/region, go to your [market settings.](\/admin\/settings\/markets)",
+                "de": "Gehe zu den [Markteinstellungen](\/admin\/settings\/markets), um ein Land \/ eine Region hinzuzufügen.",
+                "es": "Para agregar un país\/región, ve a tu [configuración de mercado.](\/admin\/settings\/markets)",
+                "fr": "Pour ajouter un pays\/une région, allez à vos [paramètres du marché.](\/admin\/settings\/markets)",
+                "pt-PT": "Para adicionar um país\/região, vá a [configurações de mercado.](\/admin\/settings\/markets)"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_country_selector",
+            "label": {
+                "en": "Enable country\/region selector",
+                "de": "Auswahl für Land\/Region aktivieren",
+                "es": "Activar selector de país\/región",
+                "fr": "Activer le sélecteur de pays\/région",
+                "pt-PT": "Ativar seletor de país\/região"
+            },
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": {
+                "en": "Language Selector",
+                "de": "Sprachauswahl",
+                "es": "Selector de idioma",
+                "fr": "Sélecteur de langue",
+                "pt-PT": "Seletor de Idioma"
+            },
+            "info": {
+                "en": "To add a language, go to your [language settings.](/admin/settings/languages)",
+                "de": "Gehen Sie zu Ihren [Spracheinstellungen](/admin/settings/languages), um eine Sprache hinzuzufügen.",
+                "es": "Para agregar un idioma, ve a tu[configuración de idioma](/admin/settings/languages)",
+                "fr": "Pour ajouter une langue, allez dans vos [paramètres de langue.](/admin/settings/languages).",
+                "pt-PT": "Para adicionar um idioma, aceda a [definições de idioma.](/admin/settings/languages)"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_locale_selector",
+            "label": {
+                "en": "Enable language selector",
+                "de": "Sprachauswahl aktivieren",
+                "es": "Activar selector de idioma",
+                "fr": "Activer le sélecteur de langue",
+                "pt-PT": "Ativar seletor de idioma"
+            },
+            "default": true
+        }
+    ],
+    "blocks": [
+        {
+            "type": "text",
+            "name": {
+                "en": "Text",
+                "de": "Text",
+                "es": "Texto",
+                "fr": "Texte",
+                "pt-PT": "Texto"
+            },
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": {
+                        "en": "Heading",
+                        "de": "Überschrift",
+                        "es": "Encabezado",
+                        "fr": "Rubrique",
+                        "pt-PT": "Título"
+                    },
+                    "default": {
+                        "en": "Contact us",
+                        "de": "Kontaktieren Sie uns",
+                        "es": "Contacto",
+                        "fr": "Contactez-nous",
+                        "pt-PT": "Contacte-nos"
+                    }
+                },
+                {
+                    "type": "richtext",
+                    "id": "richtext",
+                    "label": {
+                        "en": "Text",
+                        "de": "Text",
+                        "es": "Texto",
+                        "fr": "Texte",
+                        "pt-PT": "Texto"
+                    },
+                    "default": {
+                        "en": "<p>Share store details, promotions, or brand content with your customers.</p>",
+                        "de": "<p>Teilen Sie Einzelheiten zum Store, Werbeaktionen oder Markeninhalte mit Ihren Kunden.</p>",
+                        "es": "<p>Comparta detalles de la tienda, promociones o contenido de la marca con sus clientes.</p>",
+                        "fr": "<p>Partagez les détails du magasin, les promotions ou le contenu de la marque avec vos clients. </p>",
+                        "pt-PT": "<p>Partilhe detalhes, promoções ou conteúdo da marca da loja com os seus clientes.</p>"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "menu",
+            "name": {
+                "en": "Navigation",
+                "de": "Navigation",
+                "es": "Navegación",
+                "fr": "Navigation",
+                "pt-PT": "Navegação"
+            },
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "menu_title",
+                    "label": {
+                        "en": "Heading",
+                        "de": "Überschrift",
+                        "es": "Encabezado",
+                        "fr": "Rubrique",
+                        "pt-PT": "Título"
+                    },
+                    "default": {
+                        "en": "Links",
+                        "de": "Links",
+                        "es": "Enlaces",
+                        "fr": "Liens",
+                        "pt-PT": "Ligações"
+                    }
+                },
+                {
+                    "type": "link_list",
+                    "id": "footer_linklist",
+                    "label": {
+                        "en": "Footer menu",
+                        "de": "Voettekstmenu",
+                        "es": "Menú de pie de página",
+                        "fr": "Menu de pied de page",
+                        "pt-PT": "Menu de Rodapé"
+                    },
+                    "default": "main-menu"
+                }
+            ]
+        },
+        {
+            "type": "newsletter",
+            "name": {
+                "en": "Newsletter",
+                "de": "Newsletter",
+                "es": "Boletín de noticias",
+                "fr": "Bulletin d'information",
+                "pt-PT": "Newsletter"
+            },
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "menu_title",
+                    "label": {
+                        "en": "Heading",
+                        "de": "Überschrift",
+                        "es": "Encabezado",
+                        "fr": "Rubrique",
+                        "pt-PT": "Título"
+                    },
+                    "default": {
+                        "en": "Join our Mailing List",
+                        "de": "Melden Sie sich bei unserer Mailingliste an",
+                        "es": "Únase a nuestra lista de correo electrónico",
+                        "fr": "Inscrivez-vous à notre liste d'envoi",
+                        "pt-PT": "Aderir à nossa Lista de E-mails"
+                    }
+                },
+                {
+                    "type": "richtext",
+                    "id": "footer_newsletter_description",
+                    "label": {
+                        "en": "Newsletter description",
+                        "de": "Newsletter-Beschreibung",
+                        "es": "Descripción del boletín de noticias",
+                        "fr": "Description du bulletin d'information",
+                        "pt-PT": "Descrição da newsletter"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "social",
+            "name": {
+                "en": "Social icons",
+                "de": "Soziale Symbole",
+                "es": "Iconos de redes sociales",
+                "fr": "Icônes sociales",
+                "pt-PT": "Ícones sociais"
+            },
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "menu_title",
+                    "label": {
+                        "en": "Heading",
+                        "de": "Überschrift",
+                        "es": "Encabezado",
+                        "fr": "Rubrique",
+                        "pt-PT": "Título"
+                    },
+                    "default": {
+                        "de": "Bleiben Sie auf dem Laufenden",
+                        "en": "Get connected",
+                        "es": "Conectarse",
+                        "fr": "Restez en contact",
+                        "pt-PT": "Fique Ligado"
+                    }
+                },
+                {
+                    "type": "paragraph",
+                    "content": {
+                        "en": "Edit your social media settings and accounts in Theme settings",
+                        "de": "Bearbeiten Sie Ihre sozialen Einstellungen und Konten in den Theme-Einstellungen.",
+                        "es": "Edite sus ajustes de redes sociales y cuentas en la configuración del tema",
+                        "fr": "Modifiez les paramètres de vos médias sociaux et de vos comptes dans les paramètres du Thème",
+                        "pt-PT": "Edite as suas configurações e contas sociais nas configurações do Tema"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "image",
+            "name": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            },
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": {
+                        "en": "Image",
+                        "de": "Bild",
+                        "es": "Imagen",
+                        "fr": "Image",
+                        "pt-PT": "Imagem"
+                    }
+                },
+                {
+                    "type": "range",
+                    "id": "image_max_width",
+                    "min": 10,
+                    "max": 100,
+                    "step": 10,
+                    "unit": {
+                        "en": "%",
+                        "de": "%",
+                        "es": "%",
+                        "fr": "%",
+                        "pt-PT": "%"
+                    },
+                    "label": {
+                        "en": "Width",
+                        "de": "Breite",
+                        "es": "Ancho",
+                        "fr": "Largeur",
+                        "pt-PT": "Largura"
+                    },
+                    "default": 70
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": {
+                        "en": "Link",
+                        "de": "Link",
+                        "es": "Enlace",
+                        "fr": "Lien",
+                        "pt-PT": "Ligação"
+                    },
+                    "info": {
+                        "en": "Optional",
+                        "de": "Optional",
+                        "es": "Opcional",
+                        "fr": "Facultatif",
+                        "pt-PT": "Opcional"
+                    }
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": {
+                        "en": "Heading",
+                        "de": "Überschrift",
+                        "es": "Encabezado",
+                        "fr": "Rubrique",
+                        "pt-PT": "Título"
+                    },
+                    "info": {
+                        "en": "Optional",
+                        "de": "Optional",
+                        "es": "Opcional",
+                        "fr": "Facultatif",
+                        "pt-PT": "Opcional"
+                    }
+                }
+            ]
+        }
+    ],
+    "default": {
+        "blocks": [
+            {
+                "type": "text",
+                "settings": {
+                    "title": "Contact us",
+                    "richtext": "<p>Share store details, promotions, or brand content with your customers.<\/p>"
+                }
+            },
+            {
+                "type": "menu",
+                "settings": {
+                    "menu_title": "Links",
+                    "footer_linklist": "main-menu"
+                }
+            },
+            {
+                "type": "newsletter",
+                "settings": {
+                    "menu_title": "Join our Mailing List",
+                    "footer_newsletter_description": ""
+                }
+            }
+        ]
+    }
+}
+{% endschema %}

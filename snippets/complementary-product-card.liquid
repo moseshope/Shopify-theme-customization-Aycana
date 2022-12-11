@@ -1,0 +1,88 @@
+
+{% assign crop_setting = settings.product-grid %}
+{% assign image_crop = nil %}
+{% if crop_setting == "square" %}
+    {% assign image_crop = "aspect-ratio--square" %}
+{% elsif crop_setting == "tall" %}
+    {% assign image_crop = "aspect-ratio--tall" %}
+{% elsif crop_setting == "wide" %}
+    {% assign image_crop = "aspect-ratio--wide" %}
+{% endif %}
+
+<div class="complementary-product-card-wrapper">
+  <a
+    class="grid__image"
+    href="{{ comp_product.url | within: collection }}"
+    tabindex="-1"
+  >
+    {% if image_crop %}<div class="aspect-ratio {{ image_crop }}">{% endif %}
+        {% render 'responsive-image' with comp_product.media[0].preview_image, alt: comp_product.media[0].alt %}
+    {% if image_crop %}</div>{% endif %}
+
+    {% if comp_product.available %}
+      {% if comp_product.compare_at_price_max > comp_product.price and settings.show_sale_badge %}
+        <div class="fresh-badge sale-badge">{{ 'products.general.sale' | t }}</div>
+      {% endif %}
+    {% elsif settings.sold_out_badge %}
+      <div class="fresh-badge sold-out-badge">{{ 'products.product.sold_out' | t }}</div>
+    {% endif %}
+  </a>
+
+  <a href="{{ comp_product.url | within: collection }}" class="indiv-product__link">
+    <span class="indiv-product-title-text">{{ comp_product.title }}</span>
+
+    <span class="money-styling">
+      <span class="current-price">
+        <span class="money">{{ comp_product.price_min | money }}</span>
+      </span>
+
+      {% if comp_product.compare_at_price_max > comp_product.price and settings.show_sale_price %}
+        <span class="compare-at-price">
+          <span class="money">{{ comp_product.compare_at_price_max | money }}</span>
+        </span>
+      {% endif %}
+    </span>
+  </a>
+</div>
+
+{% style %}
+  @media (max-width: 768px) {
+    div[data-aid="complementary-products-block"].complementary-cross-sells-wrapper .product-description-header {
+      margin-top: 0px;
+    }
+
+    complementary-products .swiper-controls {
+      margin-top: calc(10px - 8px);
+    }
+  }
+
+  .complementary-product-card-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .complementary-product-card-wrapper .grid__image {
+    flex: 1;
+    position: relative;
+  }
+
+  .complementary-product-card-wrapper .money-styling {
+    text-align: left;
+  }
+
+  #product-box .complementary-product-card-wrapper .grid__image .fresh-badge {
+    margin-left: 0;
+  }
+
+  .complementary-product-card-wrapper .indiv-product__link {
+    flex: 2;
+  }
+
+  .complementary-product-card-wrapper .grid__image,
+  .complementary-product-card-wrapper .indiv-product__link {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+{% endstyle %}

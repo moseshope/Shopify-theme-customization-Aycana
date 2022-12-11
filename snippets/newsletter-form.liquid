@@ -1,0 +1,31 @@
+{% form 'customer' %}
+    {{ form.errors | default_errors }}
+    <input type="hidden" name="contact[tags]" value="newsletter">
+
+    <div class="text-center">
+        <div class="lds-dual-ring newsletter-spinner hide"></div>
+        <p class="note form-success{% unless form.posted_successfully? %} hide{% endunless %}">
+            <strong>{{ 'general.newsletter_form.thanks' | t }}</strong>
+        </p>
+    </div>
+
+    <div id="newsletter-wrapper" {% if form.posted_successfully? %}class="hide"{% endif %}>
+        <input
+            id="newsletter_text{% if section %}-{{ section.id }}{% endif %}"
+            type="email"
+            value="{% if customer %}{{ customer.email }}{% endif %}"
+            placeholder="{{ 'general.newsletter_form.newsletter_text' | t }}"
+            name="contact[email]"
+            class="input-group-field email"
+            aria-label="{{ 'general.newsletter_form.newsletter_text' | t }}"
+            autocorrect="off"
+            autocomplete="email"
+            autocapitalize="off"
+            required
+        >
+        
+        <button type="submit" id="newsletter_submit{% if section %}-{{ section.id }}{% endif %}" name="commit" aria-label="{{ 'general.newsletter_form.submit' | t }}" class="alt-focus">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
+{% endform %}

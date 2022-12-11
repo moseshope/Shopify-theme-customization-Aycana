@@ -1,0 +1,178 @@
+{% assign crop_setting = settings.product-grid %}
+{% assign image_crop = nil %}
+{% if crop_setting == "square" %}
+    {% assign image_crop = "aspect-ratio--square" %}
+{% elsif crop_setting == "tall" %}
+    {% assign image_crop = "aspect-ratio--tall" %}
+{% elsif crop_setting == "wide" %}
+    {% assign image_crop = "aspect-ratio--wide" %}
+{% endif %}
+
+<article class="indiv-product">
+
+  <script type="application/json" id="product-grid-{{ liquidObject.id }}" class="product-grid-json">
+    {{ liquidObject | json }}
+  </script>
+
+  {% case settings.hover-effect %}
+
+  {% when 'none' %}
+
+    <a
+      class="grid__image"
+      href="{{ liquidObject.url | within: collection }}"
+      title="{{ liquidObject.title | escape }}"
+      tabindex="-1"
+    >
+        {% if image_crop %}<div class="aspect-ratio {{ image_crop }}">{% endif %}
+            {% render 'responsive-image' with liquidObject.media[0].preview_image, alt: liquidObject.media[0].alt %}
+        {% if image_crop %}</div>{% endif %}
+    </a>
+
+  {% when 'second-image' %}
+
+    {% if liquidObject.media.size > 1 %}
+      <div class="reveal">
+        <a
+          class="grid__image"
+          href="{{ liquidObject.url | within: collection }}"
+          title="{{ liquidObject.title | escape }}"
+          tabindex="-1"
+        >
+            {% if image_crop %}<div class="aspect-ratio {{ image_crop }}">{% endif %}
+              {% render 'responsive-image' with liquidObject.media[0].preview_image, alt: liquidObject.media[0].alt %}
+              <div class="hidden">
+                {% render 'responsive-image' with liquidObject.media[1].preview_image, alt: liquidObject.media[1].alt %}
+              </div>
+            {% if image_crop %}</div>{% endif %}
+        </a>
+      </div>
+    {% else %}
+      <a
+        class="grid__image"
+        href="{{ liquidObject.url | within: collection }}"
+        title="{{ liquidObject.title | escape }}"
+        tabindex="-1"
+      >
+        {% if image_crop %}<div class="aspect-ratio {{ image_crop }}">{% endif %}
+            {% render 'responsive-image' with liquidObject.media[0].preview_image, alt: liquidObject.media[0].alt %}
+        {% if image_crop %}</div>{% endif %}
+      </a>
+    {% endif %}
+
+  {% when 'zoom' %}
+
+    <div class="collection-image--zoom-effect">
+      <div class="zoom-effect--inner">
+        <a
+          class="grid__image"
+          href="{{ liquidObject.url | within: collection }}"
+          title="{{ liquidObject.title | escape }}"
+          tabindex="-1"
+        >
+          {% if image_crop %}<div class="aspect-ratio {{ image_crop }}">{% endif %}
+             {% render 'responsive-image' with liquidObject.media[0].preview_image, alt: liquidObject.media[0].alt %}
+          {% if image_crop %}</div>{% endif %}
+        </a>
+      </div>
+    </div>
+
+  {% endcase %}
+
+  <div class="hp-title">
+
+    <a href="{{ liquidObject.url | within: collection }}" class="indiv-product__link">
+
+      {% if settings.show_vendor %}
+        <div class="indiv-product-vendor-text">{{ liquidObject.vendor | link_to_vendor }}</div>
+      {% endif %}
+
+      <span class="indiv-product-title-text">{{ liquidObject.title }}</span>
+
+      <span class="money-styling">
+
+        {% if liquidObject.compare_at_price_max > liquidObject.price %}
+          <span class="compare-at-price">
+            <span class="money">{{ liquidObject.compare_at_price_max | money }}</span>
+          </span>
+        {% endif %}
+
+        {% if liquidObject.price_varies %}
+          <small>{{ 'products.general.from' | t }}</small> <span class="money">{{ liquidObject.price_min | money }}</span>
+        {% else %}
+          <span class="money">{{ liquidObject.price_min | money }}</span>
+        {% endif %}
+
+        {% assign first_variant = liquidObject.variants[0] %}
+        {% render 'unit-price-measurement-grid', variant: first_variant %}
+
+      </span>
+
+      {% if settings.show_swatches %}
+      {% for option in liquidObject.options %}
+          {% capture downcased_option %}{{ option | downcase }}{% endcapture %}
+          {% assign option_handle = option | handle %}
+          {% assign option_index = forloop.index0 %}
+          {% assign prod_id = liquidObject.id %}
+          {% assign image_option_name = settings.image_swatch_option | downcase %}
+  
+          {% if downcased_option == image_option_name %}
+              {% if liquidObject.variants.size > 1 %}
+                <fieldset>
+                  <div data-option-index="{{ prod_id }}" class="{{ option_handle }} options indiv-product__swatches">
+                    {% assign values = '' %}
+  
+                    <legend class="sr-only">{{ option_handle }}</legend>
+  
+                    {% for variant in liquidObject.variants %}
+                      <div class="position-relative">
+                        {% assign variantID = variant.id %}
+  
+                        {% assign value = variant.options[option_index] %}
+                        {% capture wrapped_value %},{{ value }},{% endcapture %}
+                        {% unless values contains wrapped_value %}
+  
+                        {% if variant.image %}
+                          {% assign image = variant.image | product_img_url: '400x' %}
+                        {% else %}
+                          {% assign image = liquidObject.media[0].preview_image | product_img_url: '400x' %}
+                        {% endif %}
+  
+                            <input
+                              class="wetheme-custom-radio"
+                              id="section-{{ section.id }}-swatch-{{ prod_id }}-{{ value | handle }}"
+                              type="radio"
+                              name="option-{{ prod_id }}"
+                              value="{{ value | escape }}"
+                              data-href="{{ image }}"
+                            />
+  
+                            <label
+                              for="section-{{ section.id }}-swatch-{{ prod_id }}-{{ value | handle }}"
+                              style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ value | handle | append: '.png' | file_url }};)"
+                            >
+                              <span class="sr-only">{{ value | handle }}</span>
+                              <img class="crossed-out" src="{{ 'soldout_color.svg' | asset_url }}" alt="" />
+                            </label>
+  
+                        {% capture values %}{{ values }}{{ wrapped_value }}{% endcapture %}
+                        {% endunless %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                </fieldset>
+              {% endif %}
+          {% endif %}
+      {% endfor %}
+    {% endif %}
+    </a>
+  </div>
+
+  {% if liquidObject.available %}
+    {% if liquidObject.compare_at_price_max > liquidObject.price and settings.sale_badge %}
+      <div class="envy-badge sale-badge">{{ 'products.general.sale' | t }}</div>
+    {% endif %}
+  {% elsif settings.sold_out_badge %}
+    <div class="envy-badge sold-out-badge">{{ 'products.product.sold_out' | t }}</div>
+  {% endif %}
+</article>

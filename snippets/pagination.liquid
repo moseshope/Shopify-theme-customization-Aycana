@@ -1,0 +1,38 @@
+{%- if paginate.pages > 1 -%}
+  <nav aria-label="Pagination Navigation">
+    <ol class="pagination justify-content-center">
+      <li class="page-item{% unless paginate.previous.is_link %} disabled{% endunless %}">
+        <a class="page-link" href="{{ paginate.previous.url }}"{% unless paginate.previous.is_link %} tabindex="-1"{% endunless %}>
+          {{ 'general.pagination.previous' | t }}
+        </a>
+      </li>
+
+      {%- for part in paginate.parts -%}
+        {%- if part.is_link -%}
+          <li class="page-item">
+            <a href="{{ part.url }}" class="page-link" aria-label="{{ 'general.pagination.action' | t }} {{ 'general.pagination.noun' | t }} {{ part.title }}">
+              {{ part.title }}
+            </a>
+          </li>
+        {%- else -%}
+          {%- if part.title == paginate.current_page -%}
+            <li class="page-item active">
+              <span class="page-link" aria-current="page" ><span class="sr-only">{{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}</span>{{ part.title }}</span>
+            </li>
+          {%- else -%}
+            <li class="page-item">
+              <span class="page-link" aria-label="{{ 'general.pagination.noun' | t }} {{ part.title }}">{{ part.title }}</span>
+            </li>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      <li class="page-item{% unless paginate.next.is_link %} disabled{% endunless %}">
+        <a class="page-link" href="{{ paginate.next.url }}"{% unless paginate.next.is_link %} tabindex="-1"{% endunless %}>
+          {{ 'general.pagination.next' | t }}
+        </a>
+      </li>
+    </ol>
+  </nav>
+
+{%- endif -%}

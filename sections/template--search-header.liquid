@@ -1,0 +1,60 @@
+<section
+id="search_results" 
+data-wetheme-section-type="template--search-header"
+data-wetheme-section-id="{{ section.id }}"
+>
+  <header id="search_header">
+    {% if settings.enable-article-results %}
+        {% assign article_search = "article," %}
+    {% else %}
+        {% assign article_search = "" %}
+    {% endif %}
+    {% if settings.enable-product-results %}
+        {% assign product_search = "product," %}
+    {% else %}
+        {% assign product_search = "" %}
+    {% endif %}
+    {% if settings.enable-page-results %}
+        {% assign page_search = "page," %}
+    {% else %}
+        {% assign page_search = "" %}
+    {% endif %}
+    {% if search.performed %}
+        <div class="title-bar custom-font">
+            <h2>{{ 'general.search.search_results' | t }}</h2>
+        </div>
+        <form id="search-page-form" action="{{ routes.search_url }}">
+            <div id="search-wrapper">
+                <input type="hidden" name="type" value="{{ article_search }}{{ product_search }}{{ page_search }}" />
+                <label for="search_text" class="sr-only"></label>
+                <input id="search_text" name="q" type="text" size="20" onblur="if(this.value=='')this.value=this.defaultValue;" onfocus="if(this.value==this.defaultValue)this.value='';" value="{{ search.terms | escape }}"/>
+                <button
+                    id="search_submit"
+                    class="global-transition alt-focus search-page-button" 
+                    type="submit"
+                    aria-label="Submit search"
+                >
+                  <i data-feather="search"></i>
+                </button>
+            </div>
+        </form>
+    {% else %}
+        <form id="search-page-form" action="{{ routes.search_url }}">
+            <div id="search-wrapper">
+                <input type="hidden" name="type" value="{{ article_search }}{{ product_search }}{{ page_search }}" />
+                <label for="search_text" class="sr-only"></label>
+                <input id="search_text" name="q" type="text" size="20" onblur="if(this.value=='')this.value=this.defaultValue;" onfocus="if(this.value==this.defaultValue)this.value='';" value="{{ 'general.search.title' | t }}"/>
+                <button id="search_submit" class="alt-focus global-transition" type="submit">
+                  <i data-feather="search"></i>
+                </button>
+            </div>
+        </form>
+    {% endif %}
+  </header>
+</section>
+
+<style>
+  header {
+    padding-top: 30px;
+  }
+</style>

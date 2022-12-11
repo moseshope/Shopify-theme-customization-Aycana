@@ -1,0 +1,287 @@
+{{ 'section-logo-list.min.css' | asset_url | stylesheet_tag }}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+    <style>
+
+    .logo-bar-section--{{ section.id }} .logo-bar__item {
+        width: {{ section.settings.width }}px;
+    }
+
+    </style>
+
+    <div class="container logo-bar-section--{{ section.id }}">
+        <div class="row">
+            <div class="page-width col-md-12">
+
+                {% if section.settings.title != blank or section.settings.subheading != blank %}
+                <div class="title-bar custom-font">
+                    {% if section.settings.subheading != blank %}
+                        <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+                    {% endif %}
+                    {% if section.settings.title != blank %}
+                        <h2 class="wow fadeIn{% if section.settings.subheading != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if section.blocks.size > 0 %}
+                <div class="logo-bar">
+                    {% for block in section.blocks %}
+                        <div class="logo-bar__item wow fadeInUp
+                        " {{ block.shopify_attributes }}>
+                            {% if block.settings.link != blank %}
+                                <a href="{{ block.settings.link }}" class="logo-bar__link">
+                            {% endif %}
+
+                            {% if block.settings.image != blank %}
+                                {% capture props %}
+                                    style="max-width: {{ block.settings.image.width }}px"
+                                {% endcapture %}
+                                {% render 'responsive-image' with block.settings.image, alt: block.settings.image.alt, class: 'logo-bar__image', props: props, default_size: '240x' %}
+                            {% else %}
+                                {{ 'logo' | placeholder_svg_tag: 'icon--placeholder' }}
+                            {% endif %}
+
+                            {% if block.settings.link != blank %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if section.blocks.size == 0 %}
+                    <div class="placeholder-noblocks">
+                        {{ 'general.onboarding.no_content' | t }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% schema %}
+{
+    "name": {
+        "en": "Featured logos",
+        "de": "Vorgestellte Logos",
+        "es": "Logotipos destacados",
+        "fr": "Logos en vedette",
+        "pt-PT": "Logótipos em destaque"
+    },
+    "class": "homepage-section--logo-bar-wrapper",
+    "max_blocks": 20,
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "white",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "White",
+                        "de": "Weiß",
+                        "es": "Blanco",
+                        "fr": "Blanc",
+                        "pt-PT": "Branco"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ],
+            "info": {
+                "en": "Set your color schemes in 'Theme settings' > 'Colors'",
+                "de": "Legen Sie Ihre Farbschemata in 'Themeneinstellungen' > 'Farben' fest",
+                "es": "Configurar las combinaciones de color en 'Configuración del tema' > 'Colores'",
+                "fr": "Définissez vos jeux de couleurs dans « Paramètres du thème » > « Couleurs »",
+                "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
+            }
+        },
+        {
+            "type": "range",
+            "id": "width",
+            "label": {
+                "en": "Logo width",
+                "de": "Logobreite",
+                "es": "Ancho del logotipo",
+                "fr": "Largeur du logo",
+                "pt-PT": "Largura do logótipo"
+            },
+            "min": 100,
+            "max": 240,
+            "step": 10,
+            "unit": {
+                "en": "px",
+                "de": "px",
+                "es": "px",
+                "fr": "px",
+                "pt-PT": "px"
+            },
+            "default": 150
+        },
+        {
+            "type": "text",
+            "id": "subheading",
+            "label": {
+              "en": "Subheading",
+              "de": "Unterüberschrift",
+              "es": "Subencabezado",
+              "fr": "Sous-rubrique",
+              "pt-PT": "Subtítulo"
+            }
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "As seen in",
+                "de": "Wie gesehen in",
+                "es": "Visto en",
+                "fr": "Comme on peut le voir dans",
+                "pt-PT": "Conforme visto em"
+            }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "logo_image",
+            "name": {
+                "en": "Logo",
+                "de": "Logo",
+                "es": "Logotipo",
+                "fr": "Logo",
+                "pt-PT": "Logótipo"
+            },
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": {
+                        "en": "Image",
+                        "de": "Bild",
+                        "es": "Imagen",
+                        "fr": "Image",
+                        "pt-PT": "Imagem"
+                    }
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": {
+                        "en": "Link",
+                        "de": "Link",
+                        "es": "Enlace",
+                        "fr": "Lien",
+                        "pt-PT": "Ligação"
+                    },
+                    "info": {
+                        "en": "Optional",
+                        "de": "Optional",
+                        "es": "Opcional",
+                        "fr": "Facultatif",
+                        "pt-PT": "Opcional"
+                    }
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Logo list",
+                "de": "Logoliste",
+                "es": "Lista de logotipos",
+                "fr": "Liste des logos",
+                "pt-PT": "Lista de logótipos"
+            },
+            "category": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            },
+            "blocks": [
+                {
+                    "type": "logo_image"
+                },
+                {
+                    "type": "logo_image"
+                },
+                {
+                    "type": "logo_image"
+                },
+                {
+                    "type": "logo_image"
+                }
+            ]
+        }
+    ],
+    "templates": [
+        "index",
+        "collection",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

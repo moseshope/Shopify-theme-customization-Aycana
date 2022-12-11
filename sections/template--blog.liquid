@@ -1,0 +1,380 @@
+<section id="blog_posts" class="collection">
+
+	{% paginate blog.articles by section.settings.blog-posts-per-page %}
+
+	<div class="row blog__post-container">
+
+		{% assign has_sidebar = false %}
+		{% if section.settings.blog_sidebar_image or section.settings.blog_sidebar_title != empty or
+		section.settings.blog_sidebar_desc != empty or section.settings.show_blog_tags or section.settings.show_recent_posts
+		%}
+		{% assign has_sidebar = true %}
+		<div class="col-md-8 blog-main">
+			{% else %}
+			<div class="col-md-10 offset-md-1 blog-main">
+				{% endif %}
+
+				{% assign item_width = 'col-12' %}
+				{% if section.settings.blog_layout == 'grid' %}
+				{% if section.settings.blog-posts-per-page == 1 %}
+				{% assign item_width = 'col-12' %}
+				{% elsif has_sidebar or section.settings.blog-posts-per-page == 2 %}
+				{% assign item_width = 'col-12 col-sm-6' %}
+				{% else %}
+				{% assign item_width = 'col-12 col-sm-6 col-md-4' %}
+				{% endif %}
+				<div class="container-fluid">
+					<div class="row">
+						{% endif %}
+
+						{% for article in blog.articles %}
+
+						<article class="{{ item_width }}">
+
+							{% if article.image %}
+							<div class="article-image">
+								<a href="{{article.url}}" title="{{ 'blogs.article.view_post' | t }}" tabindex="-1">
+									{% render 'responsive-image' with article.image, alt: article.image.alt %}
+								</a>
+							</div>
+							{% endif %}
+
+							<div class="blog-title-wrapper{% if article.image %} article-image-header{% endif %}">
+
+								<div
+									class="blog-title-wrapper homepage-blog-title-wrapper{% if article.image %} article-image-header{% endif %}">
+
+									<h3 class="type-subheading type-subheading--2">
+										<a href="{{ article.url }}">{{ article.title }}</a>
+									</h3>
+
+									{% if section.settings.show_dates or section.settings.show_author_name %}
+									<div class="blog__date-author">
+										<div class="blog-publish-date">
+											{% if section.settings.show_dates %}
+											<time class="updated blog--indiv-date"
+												datetime="{{ article.published_at | date: format: 'long' }}" pubdate>{{ article.published_at |
+												date: format: 'month_day_year' }}</time>
+											{% endif %}
+
+											{% if section.settings.show_dates and section.settings.show_author_name %}
+											<span> | </span>
+											{% endif %}
+
+											{% if section.settings.show_author_name %}<span>
+												{{ article.author }}</span>
+											{% endif %}
+										</div>
+									</div>
+									{% endif %}
+
+								</div>
+
+								<div class="blog--excerpt entry-content">
+									{{ article.excerpt_or_content | strip_html | truncate: 300 }}
+								</div>
+
+								<div class="blog--read-more">
+									<a href="{{ article.url }}" class="button--text-subdued" tabindex="-1">{{ 'blogs.article.read_more' |
+										t }}</a>
+								</div>
+
+							</div>
+
+						</article>
+
+						{% endfor %}
+
+						{% if section.settings.blog_layout == 'grid' %}
+					</div>
+				</div>
+				{% endif %}
+
+			</div>
+
+			{% if section.settings.blog_sidebar_image or section.settings.blog_sidebar_title != empty or
+			section.settings.blog_sidebar_desc != empty or section.settings.show_blog_tags or
+			section.settings.show_recent_posts %}
+
+			<div class="col-md-4">
+
+				<div id="blog-sidebar" class="col-12">
+
+					{% if section.settings.blog_sidebar_image or
+					section.settings.blog_sidebar_title != empty or
+					section.settings.blog_sidebar_desc != empty %}
+
+					<div class="blog-sidebar--section">
+
+						{% if section.settings.blog_sidebar_image %}
+						<div class="sidebar-custom-image">
+							{% unless section.settings.blog-sidebar-link == blank %}
+							<a href="{{ section.settings.blog-sidebar-link }}" itemprop="url">
+								{% endunless %}
+								{% render 'responsive-image' with section.settings.blog_sidebar_image, alt:
+								section.settings.blog_sidebar_image.alt %}
+								{% unless section.settings.blog-sidebar-link == blank %}
+							</a>
+							{% endunless %}
+						</div>
+						{% endif %}
+
+
+						{% if section.settings.blog_sidebar_title != empty %}
+						<h2>{{ section.settings.blog_sidebar_title | escape }}</h2>
+						{% endif %}
+
+						{% if section.settings.blog_sidebar_desc != empty %}
+						<div class="blog-sidebar--description">{{ section.settings.blog_sidebar_desc }}</div>
+						{% endif %}
+
+					</div>
+
+					{% endif %}
+
+					{% if section.settings.show_blog_tags %}
+
+					<div class="blog-sidebar--section">
+
+						{% if blog.all_tags.size > 0 %}
+						<h2>{{ 'blogs.sidebar.categories' | t }}</h2>
+						<ul class="blog-sidebar--categories">
+							{% for tag in blog.all_tags %}
+							{% if current_tags contains tag %}
+							<li>{{ tag }}</li>
+							{% else %}
+							<li>{{ tag | link_to_tag: tag }}</li>
+							{% endif %}
+							{% endfor %}
+						</ul>
+						{% endif %}
+
+					</div>
+
+					{% endif %}
+
+					{% if section.settings.show_recent_posts %}
+
+					<div class="blog-sidebar--section">
+
+						<h2>{{ 'blogs.sidebar.latest_articles' | t }}</h2>
+						<ul class="blog-sidebar--latest-articles">
+							{% for article in blogs[blog.handle].articles limit:6 %}
+							<li class="row">
+								{% if article.image %}
+								<div class="col-md-4 blog-sidebar--article-image">
+									<a href="{{ article.url }}">
+										{% render 'responsive-image' with article.image, alt: article.image.alt %}
+									</a>
+								</div>
+								<div class="col-md-8 blog-sidebar--info">
+									<h4><a href="{{ article.url }}">{{ article.title }}</a></h4>
+									<p>
+										{% if section.settings.show_dates %}
+										<time datetime="{{ article.published_at | date: format: 'long' }}" pubdate>{{ article.published_at |
+											time_tag: format: 'month_day_year' }}</time>
+										{% endif %}
+									</p>
+								</div>
+								{% else %}
+								<h4><a href="{{ article.url }}">{{ article.title }}</a></h4>
+								<p>
+									{% if section.settings.show_dates %}
+									<time datetime="{{ article.published_at | date: format: 'long' }}" pubdate>{{ article.published_at |
+										time_tag: format: 'month_day_year' }}</time>
+									{% endif %}
+								</p>
+								{% endif %}
+							</li>
+							{% endfor %}
+						</ul>
+
+					</div>
+
+					{% endif %}
+
+				</div><!-- #blog-sidebar -->
+
+			</div>
+
+			{% endif %}
+
+		</div>
+
+		{% render 'pagination', paginate: paginate %}
+
+		{% endpaginate %}
+
+</section>
+
+{% if has_sidebar %}
+	<style>
+		.navigation-banner-wrapper nav {
+			margin-left: 0;
+		}
+	</style>
+{% endif %}
+
+{% schema %}
+{
+"name": {
+"en": "Blog pages",
+"de": "Blogseiten",
+"es": "Páginas del blog",
+"fr": "Pages du blog",
+"pt-PT": "Páginas de blogs"
+},
+"settings": [
+{
+"type": "select",
+"id": "blog_layout",
+"label": {
+"en": "Layout",
+"de": "Layout",
+"es": "Diseño",
+"fr": "Mise en page",
+"pt-PT": "Apresentação"
+},
+"options": [
+{
+"value": "list",
+"label": {
+"en": "List",
+"fr": "Liste",
+"de": "Lista",
+"es": "Liste",
+"pt-PT": "Lista"
+}
+},
+{
+"value": "grid",
+"label": {
+"en": "Grid",
+"de": "Raster",
+"es": "Cuadrícula",
+"fr": "Grille",
+"pt-PT": "Grelha"
+}
+}
+],
+"default": "grid"
+},
+{
+"type": "range",
+"id": "blog-posts-per-page",
+"min": 1,
+"max": 12,
+"step": 1,
+"label": {
+"en": "Posts per page",
+"de": "Posts pro Seite",
+"es": "Publicaciones por página",
+"fr": "Messages par page",
+"pt-PT": "Publicações por página"
+},
+"default": 6
+},
+{
+"type": "checkbox",
+"id": "show_author_name",
+"label": {
+"en": "Show author name",
+"de": "Autorennamen anzeigen",
+"es": "Mostrar el nombre de autor",
+"fr": "Afficher le nom de l'auteur",
+"pt-PT": "Mostrar nome do autor"
+},
+"default": false
+},
+{
+"type": "checkbox",
+"id": "show_dates",
+"label": {
+"en": "Show dates",
+"de": "Daten anzeigen",
+"es": "Mostrar fechas",
+"fr": "Afficher les dates",
+"pt-PT": "Mostrar datas"
+},
+"default": true
+},
+{
+"type": "header",
+"content": {
+"en": "Sidebar",
+"de": "Seitenleiste",
+"es": "Barra lateral",
+"fr": "Barre latérale",
+"pt-PT": "Barra lateral"
+}
+},
+{
+"type": "image_picker",
+"id": "blog_sidebar_image",
+"label": {
+"en": "Image",
+"de": "Seitenleisten-Bild",
+"es": "Imagen de la barra lateral",
+"fr": "Image de la barre latérale",
+"pt-PT": "Imagem da barra lateral"
+}
+},
+{
+"type": "url",
+"id": "blog-sidebar-link",
+"label": {
+"en": "Link",
+"de": "Link",
+"es": "Enlace",
+"fr": "Lien",
+"pt-PT": "Ligação"
+}
+},
+{
+"type": "text",
+"id": "blog_sidebar_title",
+"label": {
+"en": "Heading",
+"de": "Seitenleisten-Überschrift",
+"es": "Encabezado de la barra lateral",
+"fr": "Titre de la barre latérale",
+"pt-PT": "Título da barra lateral"
+}
+},
+{
+"type": "richtext",
+"id": "blog_sidebar_desc",
+"label": {
+"en": "Description",
+"de": "Seitenleisten-Beschreibung",
+"es": "Descripción de la barra lateral",
+"fr": "Description de la barre latérale",
+"pt-PT": "Descrição da barra lateral"
+}
+},
+{
+"type": "checkbox",
+"id": "show_blog_tags",
+"label": {
+"en": "Show tags",
+"de": "Tags anzeigen",
+"es": "Mostrar etiquetas",
+"fr": "Afficher les étiquettes",
+"pt-PT": "Mostrar etiquetas"
+},
+"default": false
+},
+{
+"type": "checkbox",
+"id": "show_recent_posts",
+"label": {
+"en": "Show latest articles",
+"de": "Neueste Artikel anzeigen",
+"es": "Mostar Últimos artículos",
+"fr": "Afficher les Derniers articles",
+"pt-PT": "Mostrar Artigos mais recentes"
+}
+}
+]
+}
+{% endschema %}

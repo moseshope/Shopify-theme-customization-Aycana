@@ -1,0 +1,119 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+
+{% assign file_extension = 'png' %}
+
+{% if swatch == blank %}
+<div class="swatch error">
+  <p>You must include the snippet swatch.liquid with the name of a product option.</p>
+  <p>Use: <code>{% raw %}{% render 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+  <p>Example: <code>{% raw %}{% render 'swatch' with 'Color' %}{% endraw %}</code></p>
+</div>
+{% else %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign option_index = 0 %}
+{% assign image_option_name = settings.image_swatch_option | downcase %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    {% assign downcased_option = option | downcase %}
+
+    {% if found_option and downcased_option == image_option_name %}
+      {% assign is_color = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% unless found_option %}
+<div class="swatch error">
+  <p>You included the snippet swatch.liquid with the name of a product option — <code>'{{ swatch }}'</code> — that does not belong to your product.</p>
+  <p>Use <code>{% raw %}{% render 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+  <p>Example: <code>{% raw %}{% render 'swatch' with 'Color' %}{% endraw %}</code></p>
+  <p><strong>This is case-sensitive!</strong> Do not put in <code>'color'</code> if your product option name is <code>'Color'</code>.</p>
+</div>
+{% else %}
+<div class="swatches-wrapper col-md-12" {{ block.shopify_attributes }}>
+  <fieldset>
+    <legend class="swatch-title">
+      {{ swatch }}
+      <!-- Size guide link (specific variant - swatches) -->
+      {% if section.settings.size_guide_link != blank and section.settings.size_guide_message != blank %}
+        {% assign option_name = swatch | downcase %}
+        {% assign  size_guide_variant = section.settings.size_guide_variant | downcase %}
+
+        {% if option_name == size_guide_variant %}
+          <a href="{{ section.settings.size_guide_link }}" class="size-guide-link">
+            {{ section.settings.size_guide_message }}
+          </a>
+        {% endif %}
+
+      {% endif %}
+    </legend>
+    <div class="swatch clearfix" data-option-index="{{ option_index }}">
+
+      {% assign values = '' %}
+      {% for variant in product.variants %}
+        {% assign value = variant.options[option_index] | escape %}
+
+        {% comment %}Check if another variant with same value for given option is available{% endcomment %}
+        {% assign available = variant.available %}
+        {% for v in product.variants %}
+          {% if v.id != variant.id and v.options[option_index] == value and v.available %}
+            {% assign available = true %}
+          {% endif %}
+        {% endfor %}
+
+        {% assign hide = false %}
+        {% if section.settings.hide_out_of_stock or block.settings.hide_out_of_stock %}
+          {% if product.options_with_values.size == 1 and available == false %}
+            {% assign hide = true %}
+          {% endif %}
+        {% endif %}
+
+        {% unless values contains value or hide %}
+          {% assign validated_option = value | escape %}
+          {% assign values = values | join: '╪' %}
+          {% assign values = values | append: '╪' | append: value %}
+          {% assign values = values | split: '╪' %}
+          {% assign validated_selected_option = current_variant.options[option_index] | escape %}
+          <div data-value="{{ validated_option }}" class="swatch-element {% if is_color %}color {% endif %}{{ value | handle }} {% if available %}available{% else %}soldout{% endif %}">
+            {% if is_color %}
+              <div class="tooltip">{{ value }}</div>
+            {% endif %}
+
+            <input id="{{ section.id }}-swatch-{{ option_index }}-{{ validated_option }}" type="radio" name="option-{{ option_index }}" value="{{ validated_option }}" class="wetheme-custom-radio"{% if validated_selected_option == validated_option %} checked {% endif %} />
+
+            {% if is_color %}
+              <label
+                for="{{ section.id }}-swatch-{{ option_index }}-{{ validated_option }}"
+                style="background-color: {{ value | split: ' ' | last | handle }};
+                background-image: url({{ value | handle | append: '.png' | file_url }})"
+                tabindex="0"
+              >
+                <span class="sr-only">{{ value }}</span>
+                <img class="crossed-out" src="{{ 'soldout_color.svg' | asset_url }}" alt="" />
+              </label>
+            {% else %}
+              <label
+                for="{{ section.id }}-swatch-{{ option_index }}-{{ validated_option }}"
+              >
+                {{ value }}
+                <img class="crossed-out" src="{{ 'soldout.svg' | asset_url }}" alt="" />
+              </label>
+            {% endif %}
+          </div>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </fieldset>
+</div>
+
+{% endunless %}
+
+{% endif %}

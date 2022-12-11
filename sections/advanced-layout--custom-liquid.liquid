@@ -1,0 +1,25 @@
+
+<section class="homepage-sections-wrapper">
+    <div class="container">
+      {{ section.settings.custom_liquid }}
+    </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Liquid",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "Custom Liquid",
+      "default": "<div style='text-align:center;'><h2>Custom Liquid</h2><p>Add app snippets or other Liquid code to create advanced customizations.</p></div>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Liquid"
+    }
+  ]
+}
+{% endschema %}

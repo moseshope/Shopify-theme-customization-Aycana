@@ -1,0 +1,416 @@
+{{ 'section-featured-collection.min.css' | asset_url | stylesheet_tag }}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--white"  style="border:1px solid red">
+  {% when 'light' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+  <div class="container" data-wetheme-section-type="collection--featured-collection" data-wetheme-section-id="{{ section.id }}">
+    <div class="row">
+      <div class="page-width col-md-12">
+
+      {% if section.settings.title != blank or section.settings.subheading != blank %}
+        <div class="title-bar custom-font">
+          {% if section.settings.subheading != blank %}
+            <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+          {% endif %}
+          {% if section.settings.title != blank %}
+            <h2 class="wow fadeIn{% if section.settings.subheading != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+          {% endif %}
+        </div>
+      {% endif %}
+
+
+      {% assign collection = collections[section.settings.collection] %}
+
+      {% case section.settings.grid %}
+        {% when 2 %}
+          {% assign grid_item_width = 'col-6 col-sm-6 col-md-6 two_columns' %}
+        {% when 3 %}
+          {% assign grid_item_width = 'col-6 col-sm-4 col-md-4 three_columns' %}
+        {% when 4 %}
+          {% assign grid_item_width = 'col-6 col-sm-6 col-md-3 four_columns' %}
+        {% when 5 %}
+          {% assign grid_item_width = 'col-6 col-sm-6 col-md-2dot4 five_columns' %}
+        {% when 6 %}
+          {% assign grid_item_width = 'col-6 col-sm-4 col-md-2 six_columns' %}
+      {% endcase %}
+
+      {% assign product_limit = section.settings.grid | times: section.settings.rows %}
+
+      {%- capture griditemclasses -%}
+        {%- case section.settings.grid -%}
+          {%- when 2 -%}
+            {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', ' omega' %} wow fadeInUp
+          {%- when 3 -%}
+            {% cycle 'mobileCycle': ' alpha mobile-clear', '', ' mobile-clear omega', 'alpha', ' mobile-clear', ' omega' %} wow fadeInUp
+          {%- when 4 -%}
+            {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', ' omega' %} wow fadeInUp
+          {%- when 5 -%}
+            {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', '', ' omega mobile-clear tablet-clear', ' alpha', ' mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', ' omega' %} wow fadeInUp
+          {%- when 6 -%}
+            {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear', ' tablet-clear', ' mobile-clear', ' omega' %} wow fadeInUp
+        {%- endcase -%}
+      {%- endcapture -%}
+
+      <div class="row homepage-featured-products">
+
+        {% for product in collection.products limit: product_limit %}
+          <div class="grid__item {{ grid_item_width }} zoomIn collection-image-anim{{ griditemclasses }}{% if section.settings.rows == 1 %} no-bottom-margin{% endif %}">
+
+          {%-
+            render 'product-grid--indiv-product',
+            liquidObject: product, section: section
+          -%}
+
+          </div>
+
+        {% else %}
+
+          {% for i in (1..product_limit) %}
+            <div class="grid__item {{ grid_item_width }}
+
+            {% case section.settings.grid %}
+              {% when 2 %}
+                {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', ' omega' %}
+                wow fadeInUp
+              {% when 3 %}
+                {% cycle 'mobileCycle': ' alpha mobile-clear', '', ' mobile-clear omega', 'alpha', ' mobile-clear', ' omega' %}
+                wow fadeInUp
+              {% when 4 %}
+                {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', ' omega' %}
+                wow fadeInUp
+              {% when 5 %}
+                {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', '', ' omega mobile-clear tablet-clear', ' alpha', ' mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', ' omega' %}
+                wow fadeInUp
+              {% when 6 %}
+                {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear', ' tablet-clear', ' mobile-clear', ' omega' %}
+                wow fadeInUp
+            {% endcase %}
+
+            {% if section.settings.rows == 1 %} no-bottom-margin{% endif %}
+
+            ">
+
+              <article class="indiv-product">
+                <a href="{{ product.url | within: collection }}" title="{% if product %}{{product.title}}{% else %}{{ 'general.onboarding.product_title' | t }}{% endif %}">
+                  {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                  {{ 'product-' | append: current | placeholder_svg_tag: 'icon--placeholder' }}
+                </a>
+                <div class="hp-title">
+                  <a href="{{ product.url | within: collection }}">
+                    <span class="indiv-product-title-text">{{ 'general.onboarding.product_title' | t }}</span>
+                    <span class="money money-styling">
+                      {{ 1999 | money }}
+                    </span>
+                  </a>
+                </div>
+              </article>
+
+            </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+
+      {% if section.settings.show_view_all %}
+        <div class="text-center wow fadeIn delay-1">
+          <a href="{{ collection.url }}" class="btn">
+            {{ 'collections.general.view_all' | t }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  {% case section.settings.colors %}
+    {% when 'white' %}
+      .indiv-product__swatches label {
+        border: 1px solid {{ settings.font-color }};
+      }
+      .indiv-product__swatches input[type=radio]:checked+label {
+        border: 2px solid {{ settings.font-color }};
+      }
+    {% when 'light' %}
+      .indiv-product__swatches label {
+        border: 1px solid {{ settings.colorSchemeLightText }};
+      }
+      .indiv-product__swatches input[type=radio]:checked+label {
+        border: 2px solid {{ settings.colorSchemeLightText }};
+      }
+    {% when 'accent' %}
+      .indiv-product__swatches label {
+        border: 1px solid {{ settings.colorSchemeFeatureText }};
+      }
+      .indiv-product__swatches input[type=radio]:checked+label {
+        border: 2px solid {{ settings.colorSchemeFeatureText }};
+      }
+    {% when 'dark' %}
+      .indiv-product__swatches label {
+        border: 1px solid {{ settings.colorSchemeDarkText }};
+      }
+      .indiv-product__swatches input[type=radio]:checked+label {
+        border: 2px solid {{ settings.colorSchemeDarkText }};
+      }
+  {% endcase %}
+</style>
+
+{% schema %}
+{
+    "name": {
+        "en": "Featured collection",
+        "de": "Vorgestellte Kollektion",
+        "es": "Colección destacada",
+        "fr": "Collection en vedette",
+        "pt-PT": "Coleção em destaque"
+    },
+    "class": "homepage-section--featured-products-wrapper",
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "white",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "White",
+                        "de": "Weiß",
+                        "es": "Blanco",
+                        "fr": "Blanc",
+                        "pt-PT": "Branco"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ],
+            "info": {
+                "en": "Set your color schemes in 'Theme settings' > 'Colors'",
+                "de": "Legen Sie Ihre Farbschemata in 'Themeneinstellungen' > 'Farben' fest",
+                "es": "Configurar las combinaciones de color en 'Configuración del tema' > 'Colores'",
+                "fr": "Définissez vos jeux de couleurs dans « Paramètres du thème » > « Couleurs »",
+                "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
+            }
+        },
+        {
+            "type": "text",
+            "id": "subheading",
+            "label": {
+              "en": "Subheading",
+              "de": "Unterüberschrift",
+              "es": "Subencabezado",
+              "fr": "Sous-rubrique",
+              "pt-PT": "Subtítulo"
+            },
+            "default": {
+                "en": "Subheading",
+                "de": "Unterüberschrift",
+                "es": "Subencabezado",
+                "fr": "Sous-rubrique",
+                "pt-PT": "Subtítulo"
+            }
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Featured collection",
+                "de": "Vorgestellte Kollektion",
+                "es": "Colección destacada",
+                "fr": "Collection en vedette",
+                "pt-PT": "Coleção em destaque"
+            }
+        },
+        {
+            "id": "collection",
+            "type": "collection",
+            "label": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            }
+        },
+        {
+            "type": "range",
+            "id": "grid",
+            "min": 2,
+            "max": 6,
+            "step": 1,
+            "label": {
+              "en": "Products per row",
+              "de": "Produkte pro Zeile",
+              "es": "Productos por fila",
+              "fr": "Produits par ligne",
+              "pt-PT": "Produtos por linha"
+            },
+            "default": 4
+        },
+        {
+            "type": "range",
+            "id": "rows",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "label": {
+                "en": "Rows",
+                "de": "Zeilen",
+                "es": "Filas",
+                "fr": "Lignes",
+                "pt-PT": "Linhas"
+            },
+            "default": 1
+        },
+        {
+            "type": "checkbox",
+            "id": "show_view_all",
+            "label": {
+                "en": "Show 'View all' button",
+                "de": "„Alle ansehen“-Button anzeigen",
+                "es": "Mostrar botón «Ver todos»",
+                "fr": "Afficher le bouton « Voir tout »",
+                "pt-PT": "Mostrar botão \"Ver tudo\""
+            },
+            "default": false
+        }
+    ],
+    "blocks": [
+      {
+        "name": "Grid card vendor",
+        "type": "grid-card-vendor",
+        "limit": 1,
+        "settings": [
+            {
+                "type": "paragraph",
+                "content": "This block determines the position of the product grid item vendor."
+            }
+        ]
+      },
+      {
+        "name": "Grid card heading",
+        "type": "grid-card-title",
+        "limit": 1,
+        "settings": [
+            {
+                "type": "paragraph",
+                "content": "This block determines the position of the product grid item heading."
+            }
+        ]
+      },
+      {
+          "name": "Grid card price",
+          "type": "grid-card-price",
+          "limit": 1,
+          "settings": [
+              {
+                  "type": "paragraph",
+                  "content": "This block determines the position of the product grid item price."
+              }
+          ]
+      },
+      {
+          "name": "Grid card swatches",
+          "type": "grid-card-swatches",
+          "limit": 1,
+          "settings": [
+              {
+                  "type": "paragraph",
+                  "content": "This block determines the position of the product grid item swatches."
+              }
+          ]
+      }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Featured collection",
+                "de": "Vorgestellte Kollektion",
+                "es": "Colección destacada",
+                "fr": "Collection en vedette",
+                "pt-PT": "Coleção em destaque"
+            },
+            "category": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            },
+            "blocks": [
+              {
+                "type": "grid-card-title"
+              },
+              {
+                "type": "grid-card-price"
+              },
+              {
+                "type": "grid-card-swatches"
+              }
+            ]
+        }
+    ],
+    "templates": [
+        "index",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

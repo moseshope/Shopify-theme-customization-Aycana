@@ -1,0 +1,7 @@
+/* *****
+This is a CSS partial, minified file. It is referenced by the theme by default in theme.liquid.
+If you would like to edit this code we recommend swapping to the un-minified version.
+For full details and instructions please see our documentation:
+https://support.weareeight.com/hc/en-us/articles/360020366578-Un-minified-CSS-Javascript
+***** */
+.feature-row__container{width:100%}.feature-row__image img{max-width:100%;width:100%;height:auto}@media screen and (max-width:767px){.feature-row__text{padding-top:15px}}@media screen and (min-width:768px){.feature-row{display:flex}.feature-row .feature-row__text{display:flex;justify-content:center;align-items:center}.feature-row .feature-row__text .title-bar{text-align:left}.feature-row .feature-row__text h2{margin-top:0}.feature-row .feature-row--image-right .feature-row__image{order:2}.homepage-section--text-and-image-wrapper .feature-row{align-items:center}}

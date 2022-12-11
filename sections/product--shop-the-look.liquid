@@ -1,0 +1,618 @@
+{{ 'section-shop-the-look.min.css' | asset_url | stylesheet_tag }}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <div class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+{% assign main-dot-count = 0 %}
+{% assign item-index-count = 0 %}
+
+{% capture shop-the-look__description %}
+  {% if section.settings.stl__heading != blank %}
+    <h2 class="stl__heading">{{ section.settings.stl__heading | escape }}</h2>
+  {% endif %}
+
+  {% if section.settings.stl__description != blank %}
+    {{ section.settings.stl__description }}
+  {% endif %}
+
+  {% if section.settings.button__text != blank and section.settings.link != blank %}
+    <a class="btn btn-custom" href="{% if section.settings.link != blank%}{{ section.settings.link }}{% endif %}">{{ section.settings.button__text  }}</a>
+  {% endif %}
+{% endcapture %}
+
+  <div class="container" data-wetheme-section-type="product--shop-the-look" data-wetheme-section-id="{{ section.id }}">
+    <div class="row">
+      <div class="page-width col-md-12">
+
+        {% if section.settings.title != blank or section.settings.subheading != blank %}
+          <div class="title-bar custom-font">
+            {% if section.settings.subheading != blank %}
+              <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+            {% endif %}
+            {% if section.settings.title != blank %}
+              <h2 class="wow fadeIn{% if section.settings.subheading != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="stl__main {% if section.settings.image__position == 'image--right' %} stl__img-right{% endif %}">
+          {% if section.settings.description__position == "above" %}
+            <div class="stl__description-container--above">
+              {{ shop-the-look__description }}
+            </div>
+          {% endif %}
+
+          <div class="stl__image-container">
+            <div class="stl__image">
+
+              {% if section.settings.image != blank %}
+                {% for block in section.blocks %}
+                {% assign main-dot-count = main-dot-count | plus: 1 %}
+
+                  {% if block.settings.product != blank %}
+                    {% assign thisProduct = all_products[block.settings.product] %}
+                    {% if block.settings.product != blank %}
+                      <div class="stl__dot--container" style="top:{{ block.settings.top }}%; left:{{ block.settings.left }}%;" data-index="{{ main-dot-count }}" {{ block.shopify_attributes }}>
+                        <button aria-labelledby="product_{{ main-dot-count }}" class="stl__dot" data-index="{{ main-dot-count }}" type="button" data-stl-dot-block-id="{{ block.id }}"></button>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+
+                {% endfor %}
+
+                {% render 'responsive-image' with section.settings.image, class: 'stl__image', alt: section.settings.image.alt %}
+
+              {% else %}
+
+                {% for block in section.blocks %}
+                  {% assign main-dot-count = main-dot-count | plus: 1 %}
+                  <div class="stl__dot--container" style="top:{{ block.settings.top }}%; left:{{ block.settings.left }}%;" data-index="{{ main-dot-count }}" {{ block.shopify_attributes }}>
+                    <button aria-labelledby="product_{{ main-dot-count }}" class="stl__dot" data-index="{{ main-dot-count }}" type="button" data-stl-dot-block-id="{{ block.id }}"></button>
+                  </div>
+                {% endfor %}
+
+                {{ 'collection-1' | append: current | placeholder_svg_tag: 'icon--placeholder stl__image' }}
+              {% endif %}
+            </div>
+
+            {% if section.settings.description__position == "below-image" %}
+              <div class="stl__description-container--left">
+                {{ shop-the-look__description }}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="stl__outer-products-container">
+            <div class="stl__products-container">
+              {% for block in section.blocks %}
+              {% assign item-index-count = item-index-count | plus: 1 %}
+
+              {% if block.settings.product != blank %}
+                {% assign thisProduct = all_products[block.settings.product] %}
+                <div class="stl__products" id="product_{{ item-index-count }}" data-index="{{ item-index-count }}" data-stl-product-block-id="{{ block.id }}">
+                    {%-
+                      render 'product-grid--no-blocks',
+                      liquidObject: thisProduct
+                    -%}
+                </div>
+
+              {% else %}
+
+                <div class="stl__products" data-index="{{ item-index-count }}">
+                  <div class="indiv-product">
+                    <a href="{{ product.url | within: collection }}" title="{% if product %}{{product.title}}{% else %}{{ 'general.onboarding.product_title' | t }}{% endif %}">
+                      {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                      {{ 'product-' | append: current | placeholder_svg_tag: 'icon--placeholder' }}
+                    </a>
+                    <div class="hp-title">
+                      <a href="{{ product.url | within: collection }}">
+                        <span class="indiv-product-title-text" id="product_{{ current }}">{{ 'general.onboarding.product_title' | t }}</span>
+                        <span class="money money-styling">
+                          {{ 1999 | money }}
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+
+              {% endfor %}
+            </div>
+
+          {% if section.settings.description__position == "below-products" %}
+            <div class="stl__description-container--right">
+              {{ shop-the-look__description }}
+            </div>
+          {% endif %}
+
+          </div>
+
+          {% unless section.settings.description__position == "hidden" or section.settings.description__position == "above" or section.settings.description__position == "below" %}
+            <div class="stl__description-container--mobile">
+              {{ shop-the-look__description }}
+            </div>
+          {% endunless %}
+
+          {% if section.settings.description__position == "below" %}
+            <div class="stl__description-container--below">
+              {{ shop-the-look__description }}
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    @-webkit-keyframes shopTheLookDotKeyframe {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 {{ section.settings.hotspot__color }};
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px {{ section.settings.hotspot__color }};
+      opacity: 0;
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 {{ section.settings.hotspot__color }};
+      opacity: 0;
+    }
+  }
+
+  @keyframes shopTheLookDotKeyframe {
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 {{ section.settings.hotspot__color }};
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 10px {{ section.settings.hotspot__color }};
+      opacity: 0;
+    }
+    100% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 {{ section.settings.hotspot__color }};
+      opacity: 0;
+    }
+  }
+
+  .stl__dot,
+  .stl__dot-num {
+    background-color: {{ section.settings.hotspot__color }};
+  }
+</style>
+
+{% schema %}
+  {
+    "name": {
+      "en": "Shop the look",
+      "de": "Hol dir den Look",
+      "es": "Compra este look",
+      "fr": "Acheter le look",
+      "pt-PT": "Compre a aparência"
+    },
+    "class": "homepage-section--shop-the-look-wrapper",
+    "max_blocks": 4,
+    "settings": [
+      {
+        "type": "select",
+        "id": "colors",
+        "label": {
+            "en": "Color scheme",
+            "de": "Farbschema",
+            "es": "Esquema de colores",
+            "fr": "Palette de couleurs",
+            "pt-PT": "Esquema de cores"
+        },
+        "default": "white",
+        "options": [
+            {
+                "value": "white",
+                "label": {
+                    "en": "White",
+                    "de": "Weiß",
+                    "es": "Blanco",
+                    "fr": "Blanc",
+                    "pt-PT": "Branco"
+                }
+            },
+            {
+                "value": "light",
+                "label": {
+                    "en": "Light",
+                    "de": "Licht",
+                    "es": "Luz",
+                    "fr": "Clair",
+                    "pt-PT": "Claro"
+                }
+            },
+            {
+                "value": "accent",
+                "label": {
+                    "en": "Feature",
+                    "de": "Eigenschaft",
+                    "es": "Destacado",
+                    "fr": "Caractéristique",
+                    "pt-PT": "Funcionalidade"
+                }
+            },
+            {
+                "value": "dark",
+                "label": {
+                    "en": "Dark",
+                    "de": "Dunkel",
+                    "es": "Oscuro",
+                    "fr": "Foncé",
+                    "pt-PT": "Escuro"
+                }
+            }
+        ],
+        "info": {
+            "en": "Set your color schemes in 'Theme settings' > 'Colors'",
+            "de": "Legen Sie Ihre Farbschemata in 'Themeneinstellungen' > 'Farben' fest",
+            "es": "Configurar las combinaciones de color en 'Configuración del tema' > 'Colores'",
+            "fr": "Définissez vos jeux de couleurs dans « Paramètres du thème » > « Couleurs »",
+            "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
+        }
+    },
+    {
+        "type": "text",
+        "id": "subheading",
+        "label": {
+          "en": "Subheading",
+          "de": "Unterüberschrift",
+          "es": "Subencabezado",
+          "fr": "Sous-rubrique",
+          "pt-PT": "Subtítulo"
+        },
+        "default": {
+          "en": "Subheading",
+          "de": "Unterüberschrift",
+          "es": "Subencabezado",
+          "fr": "Sous-rubrique",
+          "pt-PT": "Subtítulo"
+        }
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+          "en": "Heading",
+          "de": "Überschrift",
+          "es": "Encabezado",
+          "fr": "Rubrique",
+          "pt-PT": "Título"
+      },
+      "default": {
+          "en": "Shop the look",
+          "de": "Hol dir den Look",
+          "es": "Compra este look",
+          "fr": "Acheter le look",
+          "pt-PT": "Compre a aparência"
+      }
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": {
+          "en": "Image",
+          "de": "Bild",
+          "es": "Imagen",
+          "fr": "Image",
+          "pt-PT": "Imagem"
+      },
+      "info": {
+          "en": "2000 x 900px recommended",
+          "de": "2000 x 900 px empfohlen",
+          "es": "Recomendado 2000 x 900 px",
+          "fr": "2000 x 900 px recommandé",
+          "pt-PT": "2000 x 900px, recomendado"
+      }
+    },
+    {
+        "type": "select",
+        "id": "image__position",
+        "label": {
+            "en": "Image position",
+            "de": "Bildposition",
+            "es": "Posición de la imagen",
+            "fr": "Position de l'mage",
+            "pt-PT": "Posição da imagem"
+        },
+        "default": "image--left",
+        "options": [
+            {
+                "value": "image--left",
+                "label": {
+                    "en": "Left",
+                    "de": "Links",
+                    "es": "Izquierda",
+                    "fr": "Gauche",
+                    "pt-PT": "Esquerda"
+                }
+            },
+            {
+                "value": "image--right",
+                "label": {
+                  "en": "Right",
+                  "de": "Rechts",
+                  "es": "Derecha",
+                  "fr": "Droite",
+                  "pt-PT": "Direita"
+                }
+            }
+        ]
+    },
+    {
+      "type": "color",
+      "id": "hotspot__color",
+      "label": {
+        "en": "Hotspot color",
+        "de": "Hotspot-Farben",
+        "es": "Color chulos",
+        "fr": "Couleur de la bulle",
+        "pt-PT": "Cores do ponto de acesso"
+      },
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": {
+          "en": "Description",
+          "de": "Beschreibung",
+          "es": "Descripción",
+          "fr": "Description",
+          "pt-PT": "Descrição"
+      }
+    },
+  {
+      "type": "text",
+      "id": "stl__heading",
+      "label": {
+          "en": "Heading",
+          "de": "Überschrift",
+          "es": "Encabezado",
+          "fr": "Rubrique",
+          "pt-PT": "Título"
+      },
+      "default": {
+          "en": "Heading",
+          "de": "Überschrift",
+          "es": "Encabezado",
+          "fr": "Rubrique",
+          "pt-PT": "Título"
+      }
+    },
+    {
+    "type": "richtext",
+    "id": "stl__description",
+    "label": {
+      "en": "Description",
+      "de": "Beschreibung",
+      "es": "Descripción",
+      "fr": "Description",
+      "pt-PT": "Descrição"
+    },
+    "default": {
+        "en": "<p>Add in a description of your shop the look section to encourage your customers to purchase.</p>",
+        "de": "<p>Ihrem Abschnitt „Hol dir den Look“ eine Beschreibung hinzufügen, um Ihre Kunden zum Kauf zu ermutigen.</p>",
+        "es": "<p>Incluye en la descripción de tu tienda un apartado con los looks para animar a tus clientes a comprarlos.</p>",
+        "fr": "<p>Ajoutez une description de votre section « acheter le look » pour inciter vos clients à acheter.</p>",
+        "pt-PT": "<p>Adicione uma descrição da sua secção compre a aparência para encorajar os seus clientes a comprar.</p>"
+      }
+    },
+    {
+    "type": "radio",
+    "id": "description__position",
+    "label": {
+        "en": "Description position on desktop",
+        "de": "Position der Beschreibung",
+        "es": "Posición de la descripción",
+        "fr": "Position de la description",
+        "pt-PT": "Descrição da posição"
+    },
+    "options": [
+        {
+        "value": "below-image",
+        "label": {
+            "en": "Below image",
+            "de": "Unteres Bild",
+            "es": "Debajo de la imagen",
+            "fr": "Image ci-dessous",
+            "pt-PT": "Abaixo da imagem"
+          }
+        },
+        {
+        "value": "below-products",
+        "label": {
+            "en": "Below products",
+            "de": "Nachfolgende Produkte",
+            "es": "Debajo de los productos",
+            "fr": "Ci-dessous les produits",
+            "pt-PT": "Produtos abaixo"
+          }
+        },
+        {
+          "value": "above",
+          "label": {
+            "en": "Above",
+            "de": "Oberhalb",
+            "es": "Encima",
+            "fr": "Au-dessus",
+            "pt-PT": "Acima"
+          }
+        },
+        {
+          "value": "below",
+          "label": {
+            "en": "Below",
+            "de": "Unterhalb",
+            "es": "Abajo",
+            "fr": "Ci-dessous",
+            "pt-PT": "Abaixo"
+          }
+        },
+        {
+          "value": "hidden",
+          "label": {
+            "en": "Hidden",
+            "de": "Versteckt",
+            "es": "Oculto",
+            "fr": "Caché",
+            "pt-PT": "Escondida"
+          }
+        }
+      ],
+        "default": "below-products"
+      },
+      {
+        "type": "url",
+        "id": "link",
+        "label": {
+            "en": "Button link",
+            "de": "Buttonlink",
+            "es": "Enlace del botón",
+            "fr": "Lien du bouton",
+            "pt-PT": "Ligação do botão"
+          },
+        "default": "/collections/all"
+      },
+      {
+        "type": "text",
+        "id": "button__text",
+        "label": {
+            "en": "Button text",
+            "de": "Buttontext",
+            "es": "Texto del botón",
+            "fr": "Texte des boutons",
+            "pt-PT": "Texto do botão"
+        },
+        "default": {
+          "en": "Shop the look",
+          "de": "Hol dir den Look",
+          "es": "Compra este look",
+          "fr": "Acheter le look",
+          "pt-PT": "Compre a aparência"
+        }
+    }
+    ],
+	  "blocks": [
+      {
+        "type": "product",
+        "name": {
+          "en": "Product",
+          "de": "Produkt",
+          "es": "Producto",
+          "fr": "Produit",
+          "pt-PT": "Produto"
+        },
+        "settings": [
+          {
+            "id": "product",
+            "type": "product",
+            "label": {
+              "en": "Product",
+              "de": "Produkt",
+              "es": "Producto",
+              "fr": "Produit",
+              "pt-PT": "Produto"
+            }
+          },
+          {
+            "type": "range",
+            "id": "top",
+            "label": {
+              "en": "Position from top",
+              "de": "Position von oben",
+              "es": "Posición desde la parte superior",
+              "fr": "Placer en haut",
+              "pt-PT": "Posição a partir do topo"
+            },
+            "step": 1,
+            "min": 0,
+            "max": 95,
+            "unit": "%",
+            "default": 0
+          },
+          {
+            "type": "range",
+            "id": "left",
+            "label": {
+              "en": "Position from left",
+              "de": "Position von links",
+              "es": "Posición desde la izquierda",
+              "fr": "Placer à gauche",
+              "pt-PT": "Posição a partir da esquerda"
+            },
+            "step": 1,
+            "min": 0,
+            "max": 90,
+            "unit": "%",
+            "default": 0
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+      "name": {
+          "en": "Shop the look",
+          "de": "Hol dir den Look",
+          "es": "Compra este look",
+          "fr": "Acheter le look",
+          "pt-PT": "Compre a aparência"
+      },
+      "category": {
+          "en": "Product",
+          "de": "Produkt",
+          "es": "Producto",
+          "fr": "Produit",
+          "pt-PT": "Produto"
+      },
+      "blocks": [
+          {
+              "type": "product",
+              "settings": {
+                "top": 46,
+                "left": 30
+              }
+          },
+          {
+              "type": "product",
+              "settings": {
+                "top": 63,
+                "left": 51
+              }
+          }
+      ]
+    }
+  ],
+  "templates": [
+        "index",
+        "collection",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

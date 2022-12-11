@@ -1,0 +1,7 @@
+/* *****
+This is a CSS partial, minified file. It is referenced by the theme by default in theme.liquid.
+If you would like to edit this code we recommend swapping to the un-minified version.
+For full details and instructions please see our documentation:
+https://support.weareeight.com/hc/en-us/articles/360020366578-Un-minified-CSS-Javascript
+***** */
+.homepage-section--text-over-image-wrapper .hero__title,.homepage-section--text-over-image-wrapper .rte{max-width:90%;margin-left:auto;margin-right:auto}.homepage-section--text-over-image-wrapper .hero__title a:not(.btn),.homepage-section--text-over-image-wrapper .rte a:not(.btn){color:var(--color-image-overlay-text);text-decoration:underline;transition:all .2s ease}.homepage-section--text-over-image-wrapper .hero__title a:not(.btn):hover,.homepage-section--text-over-image-wrapper .rte a:not(.btn):hover{opacity:.6;text-decoration:none}.hero__inner{display:table-cell;padding:55px 0;position:relative;vertical-align:middle;z-index:2}

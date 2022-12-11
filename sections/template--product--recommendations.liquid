@@ -1,0 +1,92 @@
+{%- if section.settings.show_product_recommendations %}
+    <div
+        class="product-recommendations"
+        data-product-id="{{ product.id }}"
+        data-limit="4"
+        data-recommendations-url="{{ routes.product_recommendations_url }}"
+        data-wetheme-section-type="template--product--recommandations"
+        data-wetheme-section-id="{{ section.id }}"
+    >
+
+        {%- if recommendations.products_count > 0 -%}
+            {% unless section.settings.product_recommendations_heading == blank %}
+                <div class="title-bar custom-font">
+                <h2>{{ section.settings.product_recommendations_heading }}</h2>
+                <div class="clear"></div>
+                </div>
+            {% endunless %}
+
+            <div class="row" data-section-id="{{ section.id }}">
+                {%- for product in recommendations.products -%}
+                    {% assign sold_out = true %}
+                    {% if product.available %}
+                        {% assign sold_out = false %}
+                    {% endif %}
+                    <div class="grid__item collection-image-anim wow fadeInUp col-md-3 col-6 indiv-product-wrapper{% cycle ' alpha mobile-clear tablet-clear', ' delay-1', ' mobile-clear tablet-clear delay-2', ' omega delay-3' %}">
+
+                      {%-
+                        render 'product-grid--no-blocks',
+                        liquidObject: product
+                      -%}
+
+                    </div>
+                {%- endfor -%}
+                </div>
+        {%- endif -%}
+    </div>
+{%- endif -%}
+    
+{% schema %}
+{
+    "name": {
+        "en": "Product recommendations",
+        "de": "Produktempfehlungen",
+        "es": "Recomendaciones de productos",
+        "fr": "Recommandations de produits",
+        "pt-PT": "Recomendações de produtos"
+    },
+    "class": "container product-recommendations-wrapper",
+    "settings": [
+        {
+            "type": "paragraph",
+            "content": {
+               "en": "Dynamic recommendations use order and product information to change and improve over time. [Learn more](https:\/\/help.shopify.com\/themes\/development\/recommended-products)",
+               "de": "Dynamische Empfehlungen nutzen Bestell- und Produktinformationen, um sich mit der Zeit zu verändern und zu verbessern. [Weitere Informationen](https:\/\/help.shopify.com\/themes\/development\/recommended-products)",
+               "es": "Las recomendaciones dinámicas usan información de pedidos y productos para cambiar y mejorar con el tiempo. [Más información](https:\/\/help.shopify.com\/themes\/development\/recommended-products)",
+               "fr": "Les recommandations dynamiques utilisent les informations sur les commandes et les produits pour changer et s'améliorer au fil du temps. [En savoir plus](https:\/\/help.shopify.com\/themes\/development\/recommended-products)",
+               "pt-PT": "As recomendações dinâmicas utilizam informações de encomenda e de produto para alterar e melhorar ao longo do tempo. [Saber mais](https:\/\/help.shopify.com\/themes\/development\/recommended-products)"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "show_product_recommendations",
+            "label": {
+                "en": "Show dynamic recommendations",
+                "de": "Dynamische Empfehlungen anzeigen",
+                "es": "Mostrar recomendaciones dinámicas",
+                "fr": "Montrer des recommandations dynamiques",
+                "pt-PT": "Mostrar recomendações dinâmicas"
+            },
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "product_recommendations_heading",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "You may also like",
+                "de": "Ihnen könnte auch gefallen",
+                "es": "También podría gustarle",
+                "fr": "Vous aimerez peut-être aussi",
+                "pt-PT": "Também poderá gostar de"
+            }
+        }
+    ]
+}
+{% endschema %}

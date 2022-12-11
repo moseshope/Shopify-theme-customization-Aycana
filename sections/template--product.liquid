@@ -1,0 +1,1608 @@
+{{ 'section-store-availability.min.css' | asset_url | stylesheet_tag }}
+
+{%- assign product_thumb_size = '160x160' -%}
+{%- assign product_image_zoom_size = '1024x1024' -%}
+
+{% comment %}Pick an option only makes sense together with dropdowns{% endcomment %}
+{% assign pick_an_option = false %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+{%- assign featured_image = current_variant.image | default: product.featured_image -%}
+
+{% comment %}
+  Check if the product is on sale and set a variable to be used below.
+{% endcomment %}
+{% assign on_sale = false %}
+{% if current_variant.compare_at_price > current_variant.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign full_width = false %}
+{% if section.settings.image_size == 'full-width' %}
+  {% assign full_width = true %}
+{% endif %}
+
+<meta itemprop="name" content="{{ product.title }}{% unless current_variant.title == 'Default Title' %} - {{ current_variant.title }}{% endunless %}">
+<meta itemprop="url" content="{{ shop.url }}{{ current_variant.url }}">
+<meta itemprop="brand" content="{{ product.vendor }}">
+<meta itemprop="image" content="{{ featured_image | img_url: '600x600' }}">
+<meta itemprop="description" content="{{ product.description | strip_html | escape }}">
+
+{% case section.settings.image_size %}
+  {% when 'small' %}
+    {%- assign product_image_width = 6 -%}
+    {%- assign product_image_size = '345x' -%}
+  {% when 'medium' %}
+    {%- assign product_image_width = 7 -%}
+    {%- assign product_image_size = '530x' -%}
+  {% when 'large' %}
+    {%- assign product_image_width = 8 -%}
+    {%- assign product_image_size = '720x' -%}
+  {% when 'full-width' %}
+    {%- assign product_image_width = 12 -%}
+    {%- assign product_image_size = '900x' -%}
+{% endcase %}
+
+{% if section.settings.thumbnail_position == 'below' or product.images.size <= 1 %}
+  {% case section.settings.image_size %}
+    {% when 'small' %}
+      {%- assign product_description_width = 'col-md-6' -%}
+    {% when 'medium' %}
+      {%- assign product_description_width = 'col-md-5' -%}
+    {% when 'large' %}
+      {%- assign product_description_width = 'col-md-4' -%}
+    {% when 'full-width' %}
+      {%- assign product_description_width = 'col-md-12' -%}
+  {% endcase %}
+{% else %}
+  {% case section.settings.image_size %}
+    {% when 'small' %}
+      {%- assign product_description_width = 'col-md-5' -%}
+    {% when 'medium' %}
+      {%- assign product_description_width = 'col-md-4' -%}
+    {% when 'large' %}
+      {%- assign product_description_width = 'col-md-3' -%}
+    {% when 'full-width' %}
+      {%- assign product_description_width = 'col-md-12' -%}
+  {% endcase %}
+{% endif %}
+
+<div class="row">
+  <div class="col-md-12">
+  	<nav class="breadcrumb" aria-label="breadcrumbs">
+  	  <a href="{{ routes.root_url }}" title="{{ 'general.breadcrumbs.back_home' | t }}">{{ 'general.breadcrumbs.home' | t }}</a>
+
+      {% if collection.url %}
+        <span aria-hidden="true">&rsaquo;</span>
+          {{ collection.title | link_to: collection.url }}
+      {% endif %}
+  	    <span aria-hidden="true">&rsaquo;</span>
+  	    <span>{{ product.title }}</span>
+  	</nav>
+  </div>
+</div>
+
+{% capture thumbnails %}
+<div class="product-single__thumbnails product-single__thumbnails--{{ section.settings.thumbnail_position }} product-page--thumb-slider
+{% if section.settings.thumbnail_position != 'below' %}
+  {% if product.media.size <= 4 %} no-arrows{% endif %}
+  vertical col-md-2
+{% else %}
+  {% if product.media.size <= 5 %} no-arrows{% endif %}
+  horizontal
+{% endif %}">
+  {% if settings.sale_badge %}
+    <div class="sale-badge mobile product-price__sale-label-{{ section.id }}{% unless on_sale %} hide{% endunless %}">{{ 'products.general.sale' | t }}</div>
+  {% endif %}
+  {% if product.media.size > 0 %}
+    <div class="thumbs-direction-nav">
+      <a class="thumbs-direction-nav--prev" href="#">
+          {% if section.settings.thumbnail_position == 'below' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          {% endif %}
+      </a>
+    </div>
+    <div
+      data-direction="{% if section.settings.thumbnail_position == 'below' %}horizontal{% else %}vertical{% endif %}"
+      data-slides-per-view="{% if section.settings.thumbnail_position != 'below' %}4{% else %}5{% endif %}"
+      data-swiper-container
+    >
+      <div
+        data-swiper-wrapper
+      >
+        {% assign featured_media = current_variant.featured_media | default: product.featured_media %}
+        {% render 'product-media', product: product, section_id: section.id, featured_media_id: featured_media.id, enable_image_zoom: section.settings.enable_zoom, enable_video_loop: section.settings.enable_video_loop, autoplay:false %}
+      </div>
+    </div>
+    <div class="thumbs-direction-nav">
+      <a class="thumbs-direction-nav--next" href="#">
+          {% if section.settings.thumbnail_position == 'below' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          {% endif %}
+      </a>
+    </div>
+    <div class="swiper-pagination"></div>
+  {% endif %}
+</div>
+{% endcapture %}
+
+<div class="row media-size-{{ section.settings.image_size }}" id="product-box" data-section-id="{{ section.id }}" data-wetheme-section-type="template--product" data-wetheme-section-id="{{ section.id }}">
+  {% if section.settings.thumbnail_position == 'left' %}
+    {{ thumbnails }}
+  {% endif %}
+  <div class="product-medias{% if section.settings.thumbnail_position != 'below' and product.media.size > 1 %} col-sm-12 col-md-{{ product_image_width | minus: 2 }}{% else %} col-md-{{ product_image_width }}{% endif %}">
+
+    {% if settings.sale_badge %}
+      <div class="sale-badge desktop product-price__sale-label-{{ section.id }}{% unless on_sale %} hide{% endunless %}">{{ 'products.general.sale' | t }}</div>
+    {% endif %}
+
+    <div class="product-single__medias">
+      {% comment %}Medias for thumbnails will go here on desktop{% endcomment %}
+      {% if product.media.size == 0 %}
+        {{ 'product-1' | append: current | placeholder_svg_tag: 'icon--placeholder' }}
+      {% endif %}
+    </div>
+
+    {% if section.settings.thumbnail_position == 'below' %}
+      {{ thumbnails }}
+    {% endif %}
+  </div>
+  {% if section.settings.thumbnail_position == 'right' %}
+    {{ thumbnails }}
+  {% endif %}
+
+  {% capture out_of_stock_email_form %}
+    <div class="sold-out-notification" id="sold-out">
+      {% form 'contact', class: 'product-page-form' %}
+      <p class="accent-text success-msg form-success {% unless form.posted_successfully? %}hide{% endunless %}">
+        {{ 'products.product.thanks' | t }}
+      </p>
+      {% capture var_title %}
+        <span id="variant_title" style="{% if product.has_only_default_variant %}display:none;{% endif %}"></span>
+      {% endcapture %}
+        <span id="notify-me">{{ 'products.product.out-stock_html' | t: product: product.title, variant: var_title }}</span>
+      {% if form.errors %}
+        <div class="error feedback accent-text">
+          <span>{{ 'products.product.wrong-email' | t }}</span>
+        </div>
+      {% endif %}
+      <div id="notify-me-wrapper" class="clearfix">
+        {% if customer %}
+          <input type="hidden" value="0">
+          <input type="email" name="contact[email]" value="{{ customer.email }}" class="form-control{% if form.errors contains 'email' %} error{% endif %} notify-me_input" />
+        {% else %}
+          <input style="position:relative;" required="required" type="email" name="contact[email]" placeholder="your@email.com" class="form-control{% if form.errors contains 'email' %} error{% endif %} notify-me_input" value="" autocorrect="off" autocapitalize="off" />
+        {% endif %}
+        <div>
+          <input type="hidden" name="contact[body]" value="Please notify me when {{ product.title | escape }}, variant: [X] becomes available." />
+        </div>
+        <div class="notify-me_submit">
+          <input class="btn custom-font" type="submit" value="Send" />
+          <span class="lds-dual-ring newsletter-spinner hide"></span>
+        </div>
+      </div>
+      {{ 'shopify.online_store.spam_detection.disclaimer_html' | t }}
+      {% endform %}
+    </div>
+  {% endcapture %}
+
+  <div class="col-sm-12 {{ product_description_width }}">
+  	<section class="entry-content product-description-main-wrapper{% if settings.show_swatches %} variant-swatches-enabled{% else %} variant-dropdown-enabled{% endif %}{% if settings.enable_store_pickup %} store-pickup-enabled{% endif %}"
+    {% if section.settings.show_out_of_stock_email %}data-stock-email-enabled="true"{% endif %}>
+
+      {% if full_width %}
+        <div class="col-sm-12 col-md-6 col-lg-4">
+      {% endif %}
+
+      {% if section.settings.form_position == "above-details" and section.settings.show_out_of_stock_email %}
+        <div class="variant-out-of-stock" style="display:none;">
+          {{ out_of_stock_email_form }}
+        </div>
+      {% endif %}
+
+        {% form 'product', product, id: "add-to-cart-form" %}
+          <input type="hidden" id="cart-link" value="{{ routes.cart_url }}" />
+
+          {% assign hide_default_title = false %}
+          {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+            {% assign hide_default_title = true %}
+          {% endif %}
+
+          <div class="product-info-wrapper">
+
+            {% for block in section.blocks %}
+              {% case block.type %}
+
+              {% when '@app' %}
+                <div {{ block.shopify_attributes }}>
+                  {% render block %}
+                </div>
+
+              {% when 'quantity-selector' %}
+
+                <div class="quantity-controls__outer {% if settings.show_swatches %}swatches-wrapper{% else %}selector-wrapper{% endif %}" {{ block.shopify_attributes }}>
+                  <label for="quantity">{{ 'products.product.quantity' | t }}</label>
+                  <div class="quantity-controls">
+                      <button
+                        type="button"
+                        class="qty-minus alt-focus"
+                        aria-label="Reduce item quantity by one"
+                      >-</button>
+                      <input
+                        id="quantity"
+                        class="quantity-selector"
+                        value="1"
+                        min="1"
+                        type="text"
+                        name="quantity"
+                      >
+                      <button
+                        type="button"
+                        class="qty-plus alt-focus"
+                        aria-label="Increase item quantity by one"
+                      >+</button>
+                  </div>
+                </div>
+
+              {% when 'vendor-sku' %}
+
+                <div class="product-vendor-sku" {{ block.shopify_attributes }}>
+                  {% if block.settings.show_vendor %}
+                    <div class="indiv-product-vendor-text">{{ product.vendor }}</div>
+                  {% endif %}
+                  {% if block.settings.show_sku %}
+                    <div class="indiv-product-sku-text{% unless current_variant.sku %} hide{% endunless %}">{{ current_variant.sku }}</div>
+                  {% endif %}
+                </div>
+
+              {% when 'product-title' %}
+
+                <h1 class="custom-font product-description-header" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+
+              {% when 'product-price' %}
+
+                <ul class="product-page--pricing{% unless block.settings.show_discount == 'hide' %} discount-badge{% endunless %}" {{ block.shopify_attributes }}>
+                  {% render 'product-pricing', current_variant: current_variant %}
+                  {% render 'unit-price-measurement-variant', current_variant: current_variant %}
+                </ul>
+
+                {% unless block.settings.show_discount == 'hide' %}
+                  {% if current_variant.compare_at_price > current_variant.price %}
+                    <div class="product-page--pricing--discount">
+                      {% case block.settings.show_discount %}
+                        {% when 'percentage' %}
+                          <span class="variant-percentage-wrapper hide">
+                            - <span class="variant-percentage">{{ current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | money_without_currency | times: 100 | remove: '.0'}}%</span>
+                          </span>
+                        {% when 'value' %}
+                          <span class="variant-value-wrapper hide">
+                            - <span class="variant-value"><span class="money">{{ current_variant.compare_at_price | minus: current_variant.price | money }}</span></span>
+                          </span>
+                      {% endcase %}
+                    </div>
+                  {% endif %}
+                {% endunless %}
+
+                {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+                  <div class="product-page__policies rte">
+                    {%- if shop.taxes_included and block.settings.tax_included -%}
+                      {{ 'products.product.include_taxes' | t }}
+                    {%- endif -%}
+                    {%- if shop.shipping_policy.body != blank and block.settings.shipping_policy -%}
+                      {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+
+              {% when 'product-options' %}
+                {% if settings.show_swatches == false and block.settings.pick_an_option %}
+                  {% unless product.has_only_default_variant %}
+                    {% assign pick_an_option = true %}
+                  {% endunless %}
+                {% endif %}
+
+                {% if pick_an_option %}
+                  {%- assign current_variant = product.selected_variant -%}
+                {% else %}
+                  {%- assign current_variant = product.selected_or_first_available_variant -%}
+                {% endif %}
+
+                {% if product.variants.size > 0  %}
+                <div {% unless block.settings.show_variant_labels %}class="hide-variant-labels"{% endunless %}>
+                  {% if settings.show_swatches %}
+                    {% unless product.has_only_default_variant %}
+                      {% for option in product.options %}
+                        {% render 'swatch' with option, product: product, section: section, block: block %}
+                      {% endfor %}
+                    {% endunless %}
+
+                  {% else %}
+
+                    {% for option in product.options_with_values %}
+                      {% unless swatches_to_show contains option.name %}
+                        <div class="product-form-option{% if hide_default_title == true %} hide{% endif %}" {{ block.shopify_attributes }}>
+                          <div class="input-field product-option-select">
+                            <wetheme-dropdown fit="parent">
+                              <select id="SingleOptionSelector-{{ forloop.index0 }}" class="wetheme-dropdown__select"{% if option.values.size == 1 %} disabled{% endif %}>
+                                  {% if pick_an_option and option.values.size > 0 %}
+                                    <option value="" selected data-placeholder>Pick a {{ option.name }}</option>
+                                  {% endif %}
+                                  {% for value in option.values %}
+                                      {% if pick_an_option and option.values.size > 0 %}
+                                          {% assign props = '' %}
+                                      {% elsif option.selected_value == value %}
+                                          {% assign props = 'selected' %}
+                                      {% else %}
+                                        {% assign props = '' %}
+                                      {% endif %}
+
+                                      {% comment %}Hide out of stock variants{% endcomment %}
+                                      {% if product.options_with_values.size == 1 and block.settings.hide_out_of_stock %}
+                                        {% assign hide = true %}
+                                        {% for v in product.variants %}
+                                          {% if v.option1 == value and v.available %}
+                                            {% assign hide = false %}
+                                          {% endif %}
+                                        {% endfor %}
+                                      {% else %}
+                                        {% assign hide = false %}
+                                      {% endif %}
+
+                                      {% unless hide %}
+                                        <option {{ props }} value="{{ value | escape }}">{{ value }}</option>
+                                      {% endunless %}
+                                  {% endfor %}
+                              </select>
+                              <label for="SingleOptionSelector-{{ forloop.index0 }}">{{ option.name }}</label>
+                            </wetheme-dropdown>
+
+                            <!-- Size guide link (specific variant - dropdown) -->
+                            {% if section.settings.size_guide_link != blank and section.settings.size_guide_message != blank %}
+                              {% assign option_name = option.name | downcase %}
+                              {% assign  size_guide_variant = section.settings.size_guide_variant | downcase %}
+
+                              {% if option_name == size_guide_variant %}
+                                <a href="{{ section.settings.size_guide_link }}" class="size-guide-link">
+                                  {{ section.settings.size_guide_message }}
+                                </a>
+                              {% endif %}
+
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endunless %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endif %}
+
+              <!-- Size guide -->
+              {% if section.settings.size_guide_link != blank and section.settings.size_guide_message != blank %}
+                <div class="size-guide__wrapper">
+                  {% render 'size-guide' with section: section %}
+                  <!-- Size guide link (no specific variant) -->
+                  {% if section.settings.size_guide_variant == blank %}
+                    <div class="col-md-12">
+                      <a href="{{ section.settings.size_guide_link }}" class="size-guide-link">
+                        {{ section.settings.size_guide_message }}
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              {% when 'payment-buttons' %}
+
+                <div class="product-page--submit-action" {{ block.shopify_attributes }}>
+                  {% assign disabled = pick_an_option %}
+                  {% unless current_variant.available %}
+                    {% assign disabled = true %}
+                  {% endunless %}
+
+                  <button
+                    type="submit"
+                    name="add"
+                    id="purchase"
+                    class="btn {% if block.settings.show_smart_checkout and product.selling_plan_groups.size == 0 %} secondary-button{% endif %}"{% if disabled %}
+                    disabled{% endif %}
+                    data-cart-action="{{ settings.cart-action }}"
+                  >
+                    {% if pick_an_option or current_variant.available %}
+                      {{ 'products.product.add_to_cart' | t }}
+                    {% else %}
+                      {{ 'products.product.sold_out' | t }}
+                    {% endif %}
+                  </button>
+
+                  {% if block.settings.show_smart_checkout %}
+                    {{ form | payment_button }}
+                  {% endif %}
+                </div>
+
+                {% if section.settings.form_position == "below-payment-buttons" and section.settings.show_out_of_stock_email %}
+                  <div class="variant-out-of-stock" style="display:none;">
+                    {{ out_of_stock_email_form }}
+                  </div>
+                {% endif %}
+
+                {% render 'product-select', section_id: section.id, variants: product.variants %}
+
+              {% when 'product-description' %}
+
+              <div class="product-description-wrapper" {{ block.shopify_attributes }}>
+                {{ product.description }}
+              </div>
+
+              {% when 'complementary-products' %}
+                <div
+                  {{ block.shopify_attributes }}
+                >
+                  {% render 'complementary-products-block' with block_settings: block.settings %}
+                </div> 
+
+              {% when 'cross-sells' %}
+
+                {% if block.settings.cross_sell_product_1 != blank or block.settings.cross_sell_product_2 != blank or block.settings.cross_sell_product_3 != blank %}
+                  {% render 'cross-sells' with block_settings: block.settings, block_attributes: block.shopify_attributes %}
+				        {% endif %}
+
+              {% when 'social-sharing' %}
+
+                {% render 'social-sharing' with block: block, block_attributes: block.shopify_attributes %}
+
+              {% when 'local-pickup' %}
+
+                <div {{ block.shopify_attributes }}><div class="product-page--local-pickup"></div></div>
+
+              {% when 'shop-pay' %}
+
+                <div class="shopify-payment-terms__container" {{ block.shopify_attributes }}>
+                  {{ form | payment_terms }}
+                </div>
+
+              {% when 'custom-liquid' %}
+
+                <div {{ block.shopify_attributes }}>{{ block.settings.custom-liquid }}</div>
+
+              {% when 'product-rating' %}
+
+                {% if block.settings.rating != blank %}
+
+                  {% if block.settings.rating-label != blank %}
+                    <p class="rating-label">{{ block.settings.rating-label }}</p>
+                    {% assign rating_aria_label = block.settings.rating-label %}
+                  {% else %}
+                    {% assign rating_aria_label = "Rating" %}
+                  {% endif %}
+
+                  {% if block.settings.rating-icon-full %}
+
+                    {% liquid
+                      assign rating_decimal = 0
+                      assign decimal = block.settings.rating | modulo: 1
+                      if decimal >= 0.3 and decimal <= 0.7
+                        assign rating_decimal = 0.5
+                      elsif decimal > 0.7
+                        assign rating_decimal = 1
+                      endif
+
+                      assign full_icons = block.settings.rating | floor | plus: rating_decimal | floor
+                      assign empty_icons = block.settings.rating-max | round | minus: full_icons
+                      if rating_decimal == 0.5
+                        assign empty_icons = empty_icons | minus: 1
+                      endif
+
+                      assign full_alt = block.settings.rating-icon-full.alt | default: "Full icon"
+                      assign empty_alt = block.setting.rating-icon-empty.alt | default: "Empty icon"
+                    %}
+
+                    <div class="rating-icons" role="img" aria-label="{{ rating_aria_label }} - {{ block.settings.rating }} out of {{ block.settings.rating-max }}">
+                      {% for i in (1..full_icons) %}
+                        <div class="rating-icons__icon" aria-hidden="true">
+                          {% render 'responsive-image' with block.settings.rating-icon-full, alt: full_alt %}
+                        </div>
+                      {% endfor %}
+
+                      {% if block.settings.rating-icon-empty %}
+
+                        {% if rating_decimal == 0.5 %}
+                          <div class="rating-icons__icon rating-icons__icon--half" aria-hidden="true" {{ block.shopify_attributes }}>
+                            <div class="rating-icons__image--full">
+                              {% render 'responsive-image' with block.settings.rating-icon-full, alt: full_alt %}
+                            </div>
+                            <div class="rating-icons__image--empty">
+                              {% render 'responsive-image' with block.settings.rating-icon-empty, alt: empty_alt %}
+                            </div>
+                          </div>
+                        {% endif %}
+
+                        {% for i in (1..empty_icons) %}
+                          <div class="rating-icons__icon" aria-hidden="true">
+                            {% render 'responsive-image' with block.settings.rating-icon-empty, alt: empty_alt %}
+                          </div>
+                        {% endfor %}
+
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <p {{ block.shopify_attributes }}>{{ block.settings.rating }} / {{ block.settings.rating-max }}</p>
+                  {% endif %}
+                {% endif %}
+
+                {% when 'image-offer' %}
+
+                  <div class="image-offer-container" {{ block.shopify_attributes }}>
+                    {% if block.settings.link != blank and block.settings.image != blank %}
+                      <a href="{{ block.settings.link }}" class="image-offer-container--is-link">
+                    {% endif %}
+
+                    {% if block.settings.image == blank %}
+                        {{ 'lifestyle-1' | placeholder_svg_tag: 'icon--placeholder' }}
+                    {% else %}
+                        {% capture alt %}{{ block.settings.image.alt | default: shop.name }}{% endcapture %}
+                        {% render 'responsive-image' with block.settings.image, alt: alt %}
+                    {% endif %}
+
+                    {% if block.settings.link != blank and block.settings.image != blank %}
+                      </a>
+                    {% endif %}
+                  </div>
+
+                  <style>
+                    .image-offer-container--is-link:hover img {
+                      border-color: {{ block.settings.hover_border_color }};
+                    }
+                  </style>
+
+                {% when 'text-with-icon' %}
+
+                  {% render 'text-with-icon', icon: block.settings.icon, text: block.settings.text, link: block.settings.link, block_attributes: block.shopify_attributes %}
+
+              {% endcase %}
+            {% endfor %}
+          </div>
+        {% endform %}
+
+        {% if full_width %}
+          </div>
+        {% endif %}
+    </section>
+  </div>
+
+  {% unless product == empty %}
+    <script type="application/json" class="product-json">
+      {{ product | json }}
+    </script>
+  {% endunless %}
+
+</div>
+
+{% schema %}
+{
+    "name": {
+        "en": "Product pages",
+        "de": "Produktseiten",
+        "es": "Páginas de producto",
+        "fr": "Pages des produits",
+        "pt-PT": "Páginas de produtos"
+    },
+    "class": "container",
+    "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_out_of_stock_email",
+          "label": {
+              "en": "Show out of stock email",
+              "de": "Die E-Mail \"Nicht lieferbar\" aktivieren",
+              "es": "Habilitar correo electrónico agotado",
+              "fr": "Activer le courriel Rupture de stock",
+              "pt-PT": "Ativar e-mail de esgotado"
+          },
+          "default": true
+        },
+        {
+          "type": "radio",
+          "id": "form_position",
+          "label": {
+            "en": "Out of stock form position"
+          },
+          "default": "below-payment-buttons",
+          "options": [
+              {
+                "value": "above-details",
+                "label": {
+                  "en": "Above product details"
+                }
+              },
+              {
+                "value": "below-payment-buttons",
+                "label": {
+                  "en": "Below payment buttons"
+                }
+              }
+          ]
+        },
+        {
+          "type": "header",
+          "content": {
+              "en": "Size guide",
+              "de": "Größenratgeber",
+              "es": "Guía de tallaje",
+              "fr": "Guide des tailles",
+              "pt-PT": "Guia de tamanhos"
+          }
+        },
+        {
+          "type": "url",
+          "id": "size_guide_link",
+          "label": {
+            "en": "Size guide page",
+            "de": "Größenratgeberseite",
+            "es": "Página con la guía de tallaje",
+            "fr": "Page du guide des tailles",
+            "pt-PT": "Página de guia de tamanhos"
+          },
+          "info": {
+            "en": "You will need to create a page to link to. [Learn more](https://help.shopify.com/en/manual/online-store/os/pages)",
+            "de": "Sie müssen eine Seite erstellen, auf die verlinkt wird. [Mehr erfahren](https://help.shopify.com/de/manual/online-store/os/pages)",
+            "es": "Deberá crear una página que vincular. [Más información](https://help.shopify.com/es/manual/online-store/os/pages)",
+            "fr": "Vous devrez créer une page à mettre en lien. [En savoir plus](https://help.shopify.com/fr/manual/online-store/os/pages)",
+            "pt-PT": "Tem de criar uma página para ligar. [Saber mais](https://help.shopify.com/pt-PT/manual/sell-online/online-store/pages)"
+          }
+        },
+        {
+          "type": "text",
+          "id": "size_guide_message",
+          "label": {
+            "en": "Size guide message",
+            "de": "Größenratgeber-Nachricht",
+            "es": "Mensaje de la guía de tallaje",
+            "fr": "Message du guide des tailles",
+            "pt-PT": "Mensagem de guia de tamanhos"
+          },
+          "default": {
+            "en": "What's my size?",
+            "de": "Was ist meine Größe?",
+            "es": "¿Cuál es mi talla?",
+            "fr": "Quelle est ma taille ?",
+            "pt-PT": "Qual é o meu tamanho?"
+          }
+        },
+        {
+          "type": "text",
+          "id": "size_guide_variant",
+          "label": {
+            "en": "Show on a specified variant option",
+            "de": "Bei einer bestimmten Variantenoption anzeigen",
+            "es": "Mostrar en una opción de variante especificada",
+            "fr": "Afficher sur une option de variante spécifiée",
+            "pt-PT": "Mostrar numa opção de variante especificada"
+          },
+          "default": {
+            "en": "Size",
+            "de": "Größe",
+            "es": "Talla",
+            "fr": "Taille",
+            "pt-PT": "Tamanho"
+          }
+        },
+        {
+            "type": "header",
+            "content": {
+              "en": "Media",
+              "de": "Medien",
+              "es": "Medios de comunicación",
+              "fr": "Médias",
+              "pt-PT": "Multimédia"
+            },
+            "info": {
+              "en": "Learn more about [media types](https://help.shopify.com/manual/products/product-media)",
+              "de": "Mehr Informationen über [Medientypen ](https://help.shopify.com/manual/products/product-media)",
+              "es": "Más información sobre [tipos de archivos multimedia](https://help.shopify.com/manual/products/product-media)",
+              "fr": "En savoir plus sur les [types de supports multimédia](https://help.shopify.com/manual/products/product-media)",
+              "pt-PT": "Saiba mais sobre [media types](https://help.shopify.com/manual/products/product-media)"
+            }
+        },
+        {
+            "type": "select",
+            "id": "image_size",
+            "label": {
+              "en": "Size",
+              "de": "Größe",
+              "es": "Tamaño",
+              "fr": "Taille",
+              "pt-PT": "Tamanho"
+            },
+            "options": [
+                {
+                    "value": "small",
+                    "label": {
+                        "en": "Small",
+                        "de": "Klein",
+                        "es": "Pequeño",
+                        "fr": "Petite",
+                        "pt-PT": "Pequeno"
+                    }
+                },
+                {
+                    "value": "medium",
+                    "label": {
+                        "en": "Medium",
+                        "de": "Mittel",
+                        "es": "Mediano",
+                        "fr": "Moyenne",
+                        "pt-PT": "Médio"
+                    }
+                },
+                {
+                    "value": "large",
+                    "label": {
+                        "en": "Large",
+                        "de": "Groß",
+                        "es": "Grande",
+                        "fr": "Grande",
+                        "pt-PT": "Grande"
+                    }
+                },
+                {
+                    "value": "full-width",
+                    "label": {
+                        "en": "Full width",
+                        "de": "Volle Breite",
+                        "es": "Ancho completo",
+                        "fr": "Pleine largeur",
+                        "pt-PT": "Largura total"
+                    }
+                }
+            ],
+            "default": "medium"
+        },
+        {
+            "type": "select",
+            "id": "thumbnail_position",
+            "label": {
+                "en": "Thumbnail position",
+                "de": "Thumbnail-Position",
+                "es": "Posición de la imagen en miniatura",
+                "fr": "Position de la vignette",
+                "pt-PT": "Posição da imagem em miniatura"
+            },
+            "options": [
+                {
+                    "value": "below",
+                    "label": {
+                        "en": "Below main image",
+                        "de": "Unter Hauptbild",
+                        "es": "Debajo de la imagen principal",
+                        "fr": "Image principale ci-dessous",
+                        "pt-PT": "Imagem principal abaixo"
+                    }
+                },
+                {
+                    "value": "left",
+                    "label": {
+                        "en": "Left of main image",
+                        "de": "Links auf Hauptbild",
+                        "es": "A la izquierda de la imagen principal",
+                        "fr": "Partie gauche de l'image principale",
+                        "pt-PT": "Esquerda da imagem principal"
+                    }
+                },
+                {
+                    "value": "right",
+                    "label": {
+                        "en": "Right of main image",
+                        "de": "Rechts auf Hauptbild",
+                        "es": "A la derecha de la imagen principal",
+                        "fr": "Partie droite de l'image principale",
+                        "pt-PT": "Direita da imagem principal"
+                    }
+                }
+            ],
+            "default": "below"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_zoom",
+            "label": {
+                "en": "Enable image zoom",
+                "de": "Bildzoom aktivieren",
+                "es": "Habilitar zoom sobre la imagen",
+                "fr": "Activer le zoom de l'image",
+                "pt-PT": "Ativar zoom de imagem"
+            },
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_video_loop",
+            "label": {
+              "de": "Videschleife aktivieren",
+              "en": "Enable video looping",
+              "es": "Habilitar la reproducción de video en bucle",
+              "fr": "Activer le bouclage de la vidéo",
+              "pt-PT": "Ativar ciclo de vídeo"
+            },
+            "default": false
+        }
+    ],
+    "blocks": [
+        {
+          "type": "@app"
+        },
+        {
+          "name": "Product Vendor/SKU",
+          "type": "vendor-sku",
+          "limit": 1,
+          "settings": [
+            {
+              "id": "show_vendor",
+              "type": "checkbox",
+              "default": false,
+              "label": "Show vendor"
+            },
+            {
+              "id": "show_sku",
+              "type": "checkbox",
+              "default": false,
+              "label": "Show SKU"
+            }
+          ]
+        },
+        {
+          "name": "Product heading",
+          "type": "product-title",
+          "limit": 1,
+          "settings": [
+          ]
+        },
+        {
+          "name": "Product price",
+          "type": "product-price",
+          "limit": 1,
+          "settings": [
+              {
+                "type": "select",
+                "id": "show_discount",
+                "label": {
+                    "en": "Show discount savings",
+                    "de": "Rabattersparnisse aktivieren",
+                    "es": "¿Habilitar ahorros por descuentos",
+                    "fr": "Permettre des économies de rabais",
+                    "pt-PT": "Ativar promoções"
+                },
+                "options": [
+                    {
+                        "value": "hide",
+                        "label": {
+                            "en": "Hide",
+                            "de": "Verbergen",
+                            "es": "Ocultar",
+                            "fr": "Cacher",
+                            "pt-PT": "Ocultar"
+                        }
+                    },
+                    {
+                        "value": "percentage",
+                        "label": {
+                            "en": "Percentage",
+                            "de": "Prozentsatz",
+                            "es": "Porcentaje",
+                            "fr": "Pourcentage",
+                            "pt-PT": "Percentagem"
+                        }
+                    },
+                    {
+                        "value": "value",
+                        "label": {
+                            "en": "Value",
+                            "de": "Wert",
+                            "es": "Valor",
+                            "fr": "Valeur",
+                            "pt-PT": "Valor"
+                        }
+                    }
+                ],
+                "default": "hide",
+                "info": {
+                    "en": "Discounts will only be shown on variants that are on sale",
+                    "de": "Rabatte werden nur auf Varianten angezeigt, die im Angebot sind",
+                    "es": "Los descuentos solo se mostrarán en las variantes que están de oferta.",
+                    "fr": "Les remises ne s'appliqueront qu'aux variantes en vente.",
+                    "pt-PT": "Os descontos apenas serão exibidos em variantes que estejam à venda"
+                }
+            },
+            {
+              "type": "checkbox",
+              "id": "tax_included",
+              "label": {
+                  "en": "Show 'tax included' message",
+                  "de": "Nachricht \"Steuer enthalten\" anzeigen",
+                  "es": "Mostrar mensaje \"impuesto incluido\"",
+                  "fr": "Afficher le message « taxe incluse »",
+                  "pt-PT": "Mostrar mensagem de 'impostos incluídos'"
+              },
+              "default": true
+            },
+            {
+              "type": "checkbox",
+              "id": "shipping_policy",
+              "label": {
+                  "en": "Show shipping policy link",
+                  "de": "Link zur Versandrichtlinie anzeigen",
+                  "es": "Mostrar enlace de política de envío",
+                  "fr": "Afficher le lien de la politique d'expédition",
+                  "pt-PT": "Mostrar hiperligação da política de envios"
+              },
+              "default": true
+            }
+          ]
+        },
+        {
+          "name": "Product options",
+          "type": "product-options",
+          "limit": 1,
+          "settings": [
+            {
+              "type": "checkbox",
+              "id": "show_variant_labels",
+              "label": {
+                  "en": "Show variant labels",
+                  "de": "Variantenbezeichnungen anzeigen",
+                  "es": "Mostrar etiquetas de las variantes",
+                  "fr": "Afficher les étiquettes des variantes",
+                  "pt-PT": "Mostrar etiquetas variantes"
+              },
+              "default": true
+            },
+            {
+                "type": "checkbox",
+                "id": "hide_out_of_stock",
+                "label": {
+                    "en": "Hide out of stock variants",
+                    "de": "Nicht lieferbare Varianten verbergen",
+                    "es": "Ocultar las variantes en el stock",
+                    "fr": "Masquer les variantes en rupture de stock",
+                    "pt-PT": "Ocultar variantes em falta"
+                },
+                "default": false,
+                "info": {
+                    "en": "Hide variants that are out of stock when there's one variant set",
+                    "de": "Nicht lieferbare Varianten verbergen, wenn eine Variante eingestellt ist",
+                    "es": "Oculta las variantes que no están disponibles en el stock cuando hay un grupo de variaciones",
+                    "fr": "Masquer les variantes en rupture de stock lorsqu'il n'y a qu'un seul ensemble de variantes.",
+                    "pt-PT": "Ocultar variantes em falta quando houver uma variante definida"
+                }
+            },
+            {
+                "type": "checkbox",
+                "id": "pick_an_option",
+                "label": {
+                    "en": "Show 'Pick an option'",
+                    "de": "„Eine Option auswählen“ aktivieren",
+                    "es": "Habilitar «Escoja una opción»",
+                    "fr": "Activez « Choisir une option ».",
+                    "pt-PT": "Ativar \"Escolher uma opção\""
+                },
+                "default": false
+            }
+          ]
+        },
+        {
+          "name": "Quantity selector",
+          "type": "quantity-selector",
+          "limit": 1
+        },
+        {
+          "name": "Payment buttons",
+          "type": "payment-buttons",
+          "limit": 1,
+          "settings": [
+            {
+                "type": "checkbox",
+                "id": "show_smart_checkout",
+                "label": {
+                    "en": "Show dynamic checkout button",
+                    "de": "Dynamischen Bezahlbutton anzeigen",
+                    "es": "Mostar el botón de compra dinámica",
+                    "fr": "Afficher le bouton de paiement dynamique",
+                    "pt-PT": "Mostrar botão de checkout dinâmico"
+                },
+                "default": true,
+                "info": {
+                    "en": "Lets customers check out directly using a familiar payment method. [Learn more](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+                    "de": "Lässt Kunden direkt unter Verwendung einer bekannten Zahlungsmethode bezahlen. [Mehr erfahren](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+                    "es": "Permita a los clientes finalizar su compra directamente utilizando un método de pago que les sea familiar. [Aprenda más](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+                    "fr": "Permet aux clients de payer directement en utilisant un mode de paiement familier. [En savoir plus](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)",
+                    "pt-PT": "Permita que os clientes façam checkout diretamente utilizando um método de pagamento familiar. [Saber mais](https://help.shopify.com/manual/using-themes/change-the-layout/dynamic-checkout)"
+                }
+            }
+          ]
+        },
+        {
+          "name": "Product description",
+          "type": "product-description",
+          "limit": 1
+        },
+        {
+          "name": "Complementary products",
+          "type": "complementary-products",
+          "limit": 1,
+          "settings": [
+            {
+              "type": "paragraph",
+              "content": "To select complementary products, add the Search & Discovery app. [Learn more](https://help.shopify.com/en/manual/online-store/search-and-discovery/product-recommendations)"
+            },
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Heading",
+              "default": "Pairs well with..."
+            },
+            {
+              "type": "range",
+              "id": "products_to_show",
+              "min": 1,
+              "max": 10,
+              "step": 1,
+              "label": "Products to show",
+              "default": 5
+            },
+            {
+              "type": "range",
+              "id": "products_per_page",
+              "min": 1,
+              "max": 4,
+              "step": 1,
+              "default": 1,
+              "label": {
+                "en": "Number of products per page",
+                "de": "Anzahl der Produkte pro Seite",
+                "es": "Cantidad de productos por página",
+                "fr": "Nombre de produits par page",
+                "pt-PT": "Número de produtos por página"
+              }
+            },
+            {
+              "type": "color",
+              "id": "complementary_block_bg",
+              "label": "Background color",
+              "default": "#F8F8F8"
+            }
+          ]
+        },
+        {
+          "name": "Cross sells",
+          "type": "cross-sells",
+          "limit": 1,
+          "settings": [
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Label",
+              "default": "Don't forget these..."
+            },
+            {
+              "type": "product",
+              "id": "cross_sell_product_1",
+              "label": "Cross sell product 1"
+            },
+            {
+              "type": "product",
+              "id": "cross_sell_product_2",
+              "label": "Cross sell product 2"
+            },
+            {
+              "type": "product",
+              "id": "cross_sell_product_3",
+              "label": "Cross sell product 3"
+            },
+            {
+              "type": "color",
+              "id": "cross_sell_bg",
+              "label": "Background color",
+              "default": "#F8F8F8"
+            }
+          ]
+        },
+        {
+          "name": "Social media",
+          "type": "social-sharing",
+          "limit": 1,
+          "settings": [
+            {
+              "type": "checkbox",
+              "id": "social_sharing_facebook",
+              "label": {
+                  "en": "Facebook",
+                  "de": "Facebook",
+                  "es": "Facebook",
+                  "fr": "Facebook",
+                  "pt-PT": "Facebook"
+              },
+              "default": true
+            },
+            {
+                "type": "checkbox",
+                "id": "social_sharing_twitter",
+                "label": {
+                    "en": "Twitter",
+                    "de": "Twitter",
+                    "es": "Twitter",
+                    "fr": "Twitter",
+                    "pt-PT": "Twitter"
+                },
+                "default": true
+            },
+            {
+                "type": "checkbox",
+                "id": "social_sharing_pinterest",
+                "label": {
+                    "en": "Pinterest",
+                    "de": "Pinterest",
+                    "es": "Pinterest",
+                    "fr": "Pinterest",
+                    "pt-PT": "Pinterest"
+                },
+                "default": true
+            }
+          ]
+        },
+        {
+          "name": "Local pickup",
+          "type": "local-pickup",
+          "limit": 1,
+          "settings": [
+            {
+              "type": "paragraph",
+              "content": "Enable the local pickup setting in 'Theme settings' > 'Products'."
+            }
+          ]
+        },
+        {
+          "name": "Shop pay installments",
+          "type": "shop-pay",
+          "limit": 1
+        },
+        {
+          "name": "Custom Liquid",
+          "type": "custom-liquid",
+          "settings": [
+            {
+              "type": "liquid",
+              "id": "custom-liquid",
+              "label": "Custom Liquid",
+              "default": "<p>Add app snippets or other Liquid code to create advanced customizations.</p>"
+            }
+          ]
+        },
+        {
+          "name": "Product rating",
+          "type": "product-rating",
+          "settings": [
+            {
+              "type": "text",
+              "id": "rating-label",
+              "label": "Label",
+              "default": "Rating"
+            },
+            {
+              "type": "text",
+              "id": "rating",
+              "label": "Rating",
+              "info": "To display a rating, add a [product rating metafield](/admin/metafields/product)"
+            },
+            {
+              "type": "image_picker",
+              "id": "rating-icon-full",
+              "label": "Full icon"
+            },
+            {
+              "type": "image_picker",
+              "id": "rating-icon-empty",
+              "label": "Empty icon",
+              "info": "Optional"
+            },
+            {
+              "type": "number",
+              "id": "rating-max",
+              "label": "Maximum",
+              "default": 5,
+              "info": "Select a maximum equal to the rating metafield's [scale maximum](/admin/metafields/product)"
+            }
+          ]
+        },
+        {
+          "name": "Image with offers",
+          "type": "image-offer",
+          "settings": [
+            {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+            },
+            {
+            "type": "url",
+            "id": "link",
+            "label": {
+              "en": "Link",
+              "de": "Link",
+              "es": "Enlace",
+              "fr": "Lien",
+              "pt-PT": "Ligação"
+            },
+            "info": {
+              "en": "Optional",
+              "de": "Optional",
+              "es": "Opcional",
+              "fr": "Facultatif",
+              "pt-PT": "Opcional"
+              }
+            },
+            {
+              "type": "color",
+              "id": "hover_border_color",
+              "label": {
+                "en": "Link hover border color",
+                "de": "Link hover border color",
+                "es": "Link hover border color",
+                "fr": "Link hover border color",
+                "pt-PT": "Link hover border color"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Text with icon",
+          "type": "text-with-icon",
+          "settings": [
+            {
+              "type": "select",
+              "id": "icon",
+              "label": {
+                "en": "Icon",
+                "de": "Symbol",
+                "es": "Icono",
+                "fr": "Icône",
+                "pt-PT": "Ícone"
+              },
+              "default": "takeaway",
+              "options": [
+                  {
+                      "value": "none",
+                      "label": {
+                          "en": "None",
+                          "de": "Keiner",
+                          "es": "Ninguno",
+                          "fr": "Aucun",
+                          "pt-PT": "Nenhum"
+                      }
+                  },
+                  {
+                      "value": "home-smile",
+                      "label": {
+                          "en": "Home with smile",
+                          "de": "Haus mit Lächeln",
+                          "es": "Hogar con sonrisa",
+                          "fr": "Accueil souriant",
+                          "pt-PT": "Casa com sorriso"
+                      }
+                  },
+                  {
+                      "value": "store",
+                      "label": {
+                          "en": "Store",
+                          "de": "Speichern",
+                          "es": "Tienda",
+                          "fr": "Magasin",
+                          "pt-PT": "Loja"
+                      }
+                  },
+                  {
+                      "value": "flag",
+                      "label": {
+                          "en": "Flag",
+                          "de": "Flagge",
+                          "es": "Bandera",
+                          "fr": "Drapeau",
+                          "pt-PT": "Bandeira"
+                      }
+                  },
+                  {
+                      "value": "service",
+                      "label": {
+                          "en": "Customer service",
+                          "de": "Kundendienst",
+                          "es": "Servicio al cliente",
+                          "fr": "Service clients",
+                          "pt-PT": "Serviço ao cliente"
+                      }
+                  },
+                  {
+                      "value": "chat",
+                      "label": {
+                          "en": "Chat bubble",
+                          "de": "Chat-Blase",
+                          "es": "Burbuja de chat",
+                          "fr": "Bulle de chat",
+                          "pt-PT": "Bolha de conversa"
+                      }
+                  },
+                  {
+                      "value": "chat-smile",
+                      "label": {
+                          "en": "Chat bubble with smile",
+                          "de": "Chat-Blase mit Lächeln",
+                          "es": "Burbuja de chat con sonrisa",
+                          "fr": "Bulle de chat avec sourire",
+                          "pt-PT": "Bolha de conversa com sorriso"
+                      }
+                  },
+                  {
+                      "value": "question-answer",
+                      "label": {
+                          "en": "Question and answer",
+                          "de": "Frage und Antwort",
+                          "es": "Pregunta y respuesta",
+                          "fr": "Question et réponse",
+                          "pt-PT": "Pergunta e resposta"
+                      }
+                  },
+                  {
+                      "value": "wallet",
+                      "label": {
+                          "en": "Wallet",
+                          "de": "Geldbörse",
+                          "es": "Cartera",
+                          "fr": "Portefeuille",
+                          "pt-PT": "Carteira"
+                      }
+                  },
+                  {
+                      "value": "price-tag",
+                      "label": {
+                          "en": "Price tag",
+                          "de": "Preisschild",
+                          "es": "Etiqueta de precio",
+                          "fr": "Étiquette de prix",
+                          "pt-PT": "Etiqueta de preço"
+                      }
+                  },
+                  {
+                      "value": "vip",
+                      "label": {
+                          "en": "VIP",
+                          "de": "VIP",
+                          "es": "VIP",
+                          "fr": "VIP",
+                          "pt-PT": "VIP"
+                      }
+                  },
+                  {
+                      "value": "crown",
+                      "label": {
+                          "en": "Crown",
+                          "de": "Krone",
+                          "es": "Corona",
+                          "fr": "Couronne",
+                          "pt-PT": "Coroa"
+                      }
+                  },
+                  {
+                      "value": "exchange",
+                      "label": {
+                          "en": "Exchange",
+                          "de": "Austausch",
+                          "es": "Intercambio",
+                          "fr": "Échange",
+                          "pt-PT": "Trocar"
+                      }
+                  },
+                  {
+                      "value": "gift",
+                      "label": {
+                          "en": "Gift",
+                          "de": "Geschenk",
+                          "es": "Regalo",
+                          "fr": "Cadeau",
+                          "pt-PT": "Presente"
+                      }
+                  },
+                  {
+                      "value": "24-hours",
+                      "label": {
+                          "en": "24 Hours",
+                          "de": "24 Stunden",
+                          "es": "24 horas",
+                          "fr": "24 heures",
+                          "pt-PT": "24 Horas"
+                      }
+                  },
+                  {
+                      "value": "heart",
+                      "label": {
+                          "en": "Heart",
+                          "de": "Herz",
+                          "es": "Corazón",
+                          "fr": "Cœur",
+                          "pt-PT": "Coração"
+                      }
+                  },
+                  {
+                      "value": "map-pin",
+                      "label": {
+                          "en": "Map pin",
+                          "de": "Karten-Nadel",
+                          "es": "Pin de mapa",
+                          "fr": "Épingle de carte",
+                          "pt-PT": "Alfinete no mapa"
+                      }
+                  },
+                  {
+                      "value": "car",
+                      "label": {
+                          "en": "Car",
+                          "de": "Auto",
+                          "es": "Coche",
+                          "fr": "Voiture",
+                          "pt-PT": "Automóvel"
+                      }
+                  },
+                  {
+                      "value": "takeaway",
+                      "label": {
+                          "en": "Takeaway",
+                          "de": "Imbissbude",
+                          "es": "Para llevar",
+                          "fr": "Emporter",
+                          "pt-PT": "Comida para fora"
+                      }
+                  },
+                  {
+                      "value": "restaurant",
+                      "label": {
+                          "en": "Restaurant",
+                          "de": "Restaurant",
+                          "es": "Restaurante",
+                          "fr": "Restaurant",
+                          "pt-PT": "Restaurante"
+                      }
+                  },
+                  {
+                      "value": "cup",
+                      "label": {
+                          "en": "Cup",
+                          "de": "Körbchen",
+                          "es": "Taza",
+                          "fr": "Tasse",
+                          "pt-PT": "Caneca"
+                      }
+                  },
+                  {
+                      "value": "goblet",
+                      "label": {
+                          "en": "Goblet",
+                          "de": "Kelch",
+                          "es": "Copa",
+                          "fr": "Gobelet",
+                          "pt-PT": "Cálice"
+                      }
+                  },
+                  {
+                      "value": "star",
+                      "label": {
+                          "en": "Star",
+                          "de": "Stern",
+                          "es": "Estrella",
+                          "fr": "Étoile",
+                          "pt-PT": "Estrela"
+                      }
+                  },
+                  {
+                      "value": "sun",
+                      "label": {
+                          "en": "Sun",
+                          "de": "Sonne",
+                          "es": "Sol",
+                          "fr": "Soleil",
+                          "pt-PT": "Sol"
+                      }
+                  },
+                  {
+                      "value": "moon",
+                      "label": {
+                          "en": "Moon",
+                          "de": "Mond",
+                          "es": "Luna",
+                          "fr": "Lune",
+                          "pt-PT": "Lua"
+                      }
+                  },
+                  {
+                      "value": "cake",
+                      "label": {
+                          "en": "Cake",
+                          "de": "Kuchen",
+                          "es": "Pastel",
+                          "fr": "Gâteau",
+                          "pt-PT": "Bolo"
+                      }
+                  },
+                  {
+                      "value": "handbag",
+                      "label": {
+                          "en": "Handbag",
+                          "de": "Handtasche",
+                          "es": "Bolso",
+                          "fr": "Sac à main",
+                          "pt-PT": "Mala de mão"
+                      }
+                  },
+                  {
+                      "value": "umbrella",
+                      "label": {
+                          "en": "Umbrella",
+                          "de": "Regenschirm",
+                          "es": "Paraguas",
+                          "fr": "Parapluie",
+                          "pt-PT": "Guarda-chuva"
+                      }
+                  },
+                  {
+                      "value": "recycle",
+                      "label": {
+                          "en": "Recycle",
+                          "de": "Recyceln",
+                          "es": "Reciclar",
+                          "fr": "Recycler",
+                          "pt-PT": "Reciclar"
+                      }
+                  }
+                ]
+            },
+            {
+              "type": "text",
+              "id": "text",
+              "label": {
+                "en": "Text",
+                "de": "Text",
+                "es": "Texto",
+                "fr": "Texte",
+                "pt-PT": "Texto"
+              },
+              "default": {
+                "en": "Free shipping",
+                "de": "Kostenloser versand",
+                "es": "Envío gratis",
+                "fr": "Livraison gratuite",
+                "pt-PT": "Envio grátis"
+              }
+            },
+            {
+              "type": "url",
+              "id": "link",
+              "label": {
+                "en": "Link",
+                "de": "Link",
+                "es": "Enlace",
+                "fr": "Lien",
+                "pt-PT": "Ligação"
+              },
+              "info": {
+                "en": "Optional",
+                "de": "Optional",
+                "es": "Opcional",
+                "fr": "Facultatif",
+                "pt-PT": "Opcional"
+              }
+            }
+          ]
+        }
+    ]
+}
+{% endschema %}

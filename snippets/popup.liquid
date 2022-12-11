@@ -1,0 +1,55 @@
+{% if settings.popup--enable %}
+	<div id="popup" class="popup--outer slide-up" data-popup-time="{{ settings.pop-up-time }}" data-popup-delay="{{ settings.popup-delay }}" data-popup-test-mode="{{ settings.popup--test-mode }}">
+
+		<div class="popup-container" id="slide-up">
+			<input type="hidden" id="pop-up-time" value="{{ settings.pop-up-time }}" />
+			<div class="container-fluid">
+				<a class="popup--close-btn" tabindex="0">
+					<span>
+						<i data-feather="x"></i>
+					</span>
+				</a>
+
+				<div class="row">
+					<div class="popup--inner-flex">
+						<div class="{% if settings.popup-newsletter-image != blank %}popup__text-wrapper--has-image{% else %}popup__text-wrapper--no-image{% endif %}">
+
+							<div class="popup--inner">
+								{% if settings.pop-up-text-header-text != empty %}
+								<div class="type-subheading type-subheading--1 popup--header-text">
+									{{ settings.pop-up-text-header-text }}
+								</div>
+								{% endif %}
+								{% if settings.pop-up-text-description-text != empty %}
+								<div class="popup--main-text">{{ settings.pop-up-text-description-text }}</div>
+								{% endif %}
+								{% if settings.popup--show-newsletter %}
+								<div id="subs-container">
+									<div class="popup__newsletter-form">
+										{% render 'newsletter-form' %}
+									</div>
+								</div>
+								{% endif %}
+
+								{% if settings.popup--show-social-icons %}
+									<div>
+										{% render 'social-links' %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+						{% if settings.popup-newsletter-image != blank %}
+							<div class="popup--image"></div>
+						{% endif %}
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+<style>
+{% render 'responsive-background-image' with settings.popup-newsletter-image, selector: '.popup--image', scale: scale %}
+</style>

@@ -1,0 +1,456 @@
+<article id="{{page.handle}}" class="post entry container">
+
+	<div class="row">
+
+		{% if section.settings.blog-sidebar-image or section.settings.blog_sidebar_title != empty or
+		section.settings.blog_sidebar_desc != empty
+		%}
+		<div class="col-md-8">
+		{% elsif section.settings.show_blog_tags and article.tags.size > 0 or section.settings.show_recent_posts  %}
+		<div class="col-md-8">
+			{% else %}
+			<div class="col-md-10 offset-md-1">
+				{% endif %}
+
+				<section class="entry-content" id="article_content">
+
+					<div class="article-image">
+						{% if article.image %}
+						{% render 'responsive-image' with article.image, alt: article.image.alt %}
+						{% endif %}
+					</div>
+
+					<div class="blog-title-wrapper{% if article.image %} article-image-header{% endif %}">
+
+						<div class="title-bar">
+							<h1>{{ article.title }}</h1>
+						</div>
+
+						{% if section.settings.show_dates or section.settings.show_author_name %}
+						<div class="blog__date-author">
+							<div class="blog-publish-date">
+								{% if section.settings.show_dates %}
+								<time class="updated blog--indiv-date" datetime="{{ article.published_at | date: format: 'long' }}"
+									pubdate>{{ article.published_at | date: format: 'month_day_year' }}</time>
+								{% endif %}
+
+								{% if section.settings.show_dates and section.settings.show_author_name %}
+								<span> | </span>
+								{% endif %}
+
+								{% if section.settings.show_author_name %}<span>
+									{{ article.author }}</span>
+								{% endif %}
+							</div>
+						</div>
+						{% endif %}
+
+					</div>
+
+					<div class="article__entry-content entry-content">
+						{% if article.content != blank %}
+							{% if article.excerpt != blank %}
+								<div class="article__entry-content--excerpt">
+									{{ article.excerpt }}
+								</div>
+							{% endif %}
+
+							{{ article.content }}
+						{% elsif article.excerpt != blank %}
+							{{ article.excerpt }}
+						{% endif %}
+					</div>
+
+					{% if article.tags.size > 0 %}
+					<div id="blog-tags-wrapper">
+						<span>{{ 'blogs.article.tags' | t }}:</span>
+						{% for tag in article.tags %}
+						<a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+						{% endfor %}
+					</div>
+					{% endif %}
+
+				</section>
+
+				{% for block in section.blocks %}
+				{% case block.type %}
+				{% when 'social-sharing' %}
+				{% render 'social-sharing' with block: block, block_attributes: block.shopify_attributes %}
+				{% endcase %}
+				{% endfor %}
+
+				{% if blog.previous_article or blog.next_article %}
+				<div id="paginate">
+					{% if blog.previous_article %}
+					<div class="article-previous-article">
+						<a href="{{ blog.previous_article }}" class="btn">{{ 'blogs.article.previous_post' | t }}</a>
+					</div>
+					{% endif %}
+
+					{% if blog.next_article %}
+					<div class="article-next-article">
+						<a href="{{ blog.next_article }}" class="btn">{{ 'blogs.article.next_post' | t }}</a>
+					</div>
+					{% endif %}
+					<div class="clear"></div>
+				</div>
+				{% endif %}
+
+				{% if blog.comments_enabled? %}
+
+				{% paginate article.comments by 3 %}
+
+				{% if article.comments != blank %}
+
+				<div id="comments" class="comments">
+
+					<div class="title-bar custom-font">
+						<h2>{{ 'blogs.article.comments_title' | t }}</h2>
+						<div class="clear"></div>
+					</div>
+
+					<ul>
+
+						{% for comment in article.comments %}
+						<li class="comment clearfix">
+							<div class="col-md-2">
+								<img src="//www.gravatar.com/avatar/{{ comment.email | remove: ' ' | strip_newlines | downcase | md5 }}"
+									class="img-responsive" alt="" />
+							</div>
+							<div class="col-md-10">
+								<div class="comment-author">
+									{% capture author %}<strong>{{ comment.author }}</strong>{% endcapture %}
+									{% capture date %}<strong><time datetime="{{ comment.created_at | date: format: 'long' }}">{{
+											comment.created_at | date: format: 'long' }}</time></strong>{% endcapture %}
+									{{ 'blogs.article.comment_meta_html' | t: author: author, date: date }}
+								</div>
+								<div class="comment-content">
+									{{ comment.content }}
+								</div>
+							</div>
+						</li>
+						{% endfor %}
+
+					</ul>
+
+					{% render 'pagination', paginate: paginate %}
+
+				</div>
+
+				{% endif %}
+
+				{% endpaginate %}
+
+				{% form 'new_comment', article %}
+
+				<div class="comment_form" id="comment-form">
+
+					<div class="title-bar custom-font">
+						<h2>{{ 'blogs.comments.title' | t }}</h2>
+						<div class="clear"></div>
+					</div>
+
+					{% if form.posted_successfully? %}
+					{% if blog.moderated? %}
+					<div class="success-msg">{{ 'blogs.comments.moderated' | t }}</div>
+					{% else %}
+					<div class="success-msg">{{ 'blogs.comments.success' | t }}</div>
+					{% endif %}
+					{% endif %}
+
+					{% if form.errors %}
+					<p class="notice error-msg">{{ 'blogs.comments.field_error' | t }}</p>
+					{% endif %}
+
+					<div class="form-group clearfix{% if form.errors contains 'author' %} has-error{% endif %}">
+						<label for="comment_author">{{ 'blogs.comments.name' | t }} <strong class="req">*</strong></label>
+						<input type="text" id="comment_author" name="comment[author]" size="40" value="{{form.author}}"
+							class="text form-control {% if form.errors contains 'author' %}input-error{% endif %}" />
+					</div>
+
+					<div class="form-group clearfix{% if form.errors contains 'email' %} has-error{% endif %}">
+						<label for="comment_email">{{ 'blogs.comments.email' | t }} <strong class="req">*</strong></label>
+						<input type="text" id="comment_email" name="comment[email]" size="40" value="{{form.email}}"
+							class="text form-control {% if form.errors contains 'email' %}input-error{% endif %}" />
+					</div>
+
+					<div class="form-group clearfix{% if form.errors contains 'body' %} has-error{% endif %}">
+						<label for="comment_body">{{ 'blogs.comments.comment' | t }} <strong class="req">*</strong></label>
+						<textarea id="comment_body" name="comment[body]" cols="40" rows="5"
+							class="text form-control {% if form.errors contains 'body' %}input-error{% endif %}">{{form.body}}</textarea>
+					</div>
+
+					<input type="submit" value="{{ 'blogs.comments.post' | t }}" id="comment-submit" class="btn" />
+
+				</div>
+
+				{% endform %}
+
+				{% endif %}
+
+			</div>
+
+			{% if section.settings.blog-sidebar-image or section.settings.blog_sidebar_title != empty or
+			section.settings.blog_sidebar_desc != empty or section.settings.show_blog_tags or
+			section.settings.show_recent_posts %}
+
+			<div class="col-md-4">
+
+				<div id="blog-sidebar">
+
+					{% if section.settings.blog-sidebar-image or section.settings.blog_sidebar_title != empty or
+					section.settings.blog_sidebar_desc != empty %}
+					<div class="blog-sidebar--section">
+
+						{% if section.settings.blog-sidebar-image %}
+						<div class="sidebar-custom-image">
+							{% unless section.settings.blog-sidebar-link == blank %}
+							<a href="{{ section.settings.blog-sidebar-link }}" itemprop="url">
+								{% endunless %}
+								{% capture props %}
+								style="max-width: {{ section.settings.blog-sidebar-image.width }}px"
+								{% endcapture %}
+								{% capture sidebarImageAlt %}
+								{{ section.settings.blog-sidebar-image.alt | default: shop.name }}
+								{% endcapture %}
+								{% render 'responsive-image' with section.settings.blog-sidebar-image, props: props, alt:
+								sidebarImageAlt %}
+								{% unless section.settings.blog-sidebar-link == blank %}
+							</a>
+							{% endunless %}
+						</div>
+						{% endif %}
+
+						{% if section.settings.blog_sidebar_title != empty %}
+						<h3 class="type-subheading type-subheading--2">{{ section.settings.blog_sidebar_title | escape }}</h3>
+						{% endif %}
+
+						{% if section.settings.blog_sidebar_desc != empty %}
+						<div class="blog-sidebar--description">{{ section.settings.blog_sidebar_desc }}</div>
+						{% endif %}
+
+					</div>
+					{% endif %}
+
+					{% if section.settings.show_blog_tags %}
+					<div class="blog-sidebar--section">
+						{% if blog.all_tags.size > 0 %}
+						<h3 class="type-subheading type-subheading--2">{{ 'blogs.sidebar.categories' | t }}</h3>
+						<ul class="blog-sidebar--categories">
+							{% for tag in blog.all_tags %}
+							{% if current_tags contains tag %}
+							<li>{{ tag }}</li>
+							{% else %}
+							<li>{{ tag | link_to_tag: tag }}</li>
+							{% endif %}
+							{% endfor %}
+						</ul>
+						{% endif %}
+					</div>
+					{% endif %}
+
+					{% if section.settings.show_recent_posts %}
+					<div class="blog-sidebar--section">
+						<h3 class="type-subheading type-subheading--2">{{ 'blogs.sidebar.latest_articles' | t }}</h3>
+						<ul class="blog-sidebar--latest-articles">
+							{% for article in blogs[blog.handle].articles limit:6 %}
+							<a href="{{ article.url }}">
+								<li class="row">
+									{% if article.image %}
+									<div class="col-md-4 blog-sidebar--article-image">
+										{% render 'responsive-image' with article.image, props: '', alt: article.image.alt %}
+									</div>
+									<div class="col-md-8 blog-sidebar--info">
+										<h4>{{ article.title }}</h4>
+										<p>
+											{% if section.settings.show_dates %}
+											<time datetime="{{ article.published_at | date: format: 'long' }}" pubdate>{{ article.published_at
+												| date: "%b %d, %Y" }}</time>
+											{% endif %}
+										</p>
+									</div>
+									{% else %}
+									<h4>{{ article.title }}</h4>
+									<p>
+										{% if section.settings.show_dates %}
+										<time datetime="{{ article.published_at | date: format: 'long' }}" pubdate>{{ article.published_at |
+											date: "%b %d, %Y" }}</time>
+										{% endif %}
+									</p>
+									{% endif %}
+								</li>
+							</a>
+							{% endfor %}
+						</ul>
+					</div>
+					{% endif %}
+
+				</div>
+
+			</div>
+
+			{% endif %}
+
+		</div>
+
+</article>
+
+{% schema %}
+{
+"name": {
+"en": "Article pages",
+"de": "Artikelseiten",
+"es": "Páginas de artículos",
+"fr": "Pages d'articles",
+"pt-PT": "Páginas de artigos"
+},
+"settings": [
+{
+"type": "checkbox",
+"id": "show_author_name",
+"label": {
+"en": "Show author name",
+"de": "Autorennamen anzeigen",
+"es": "Mostrar el nombre de autor",
+"fr": "Afficher le nom de l'auteur",
+"pt-PT": "Mostrar nome do autor"
+},
+"default": false
+},
+{
+"type": "checkbox",
+"id": "show_dates",
+"label": {
+"en": "Show dates",
+"de": "Daten anzeigen",
+"es": "Mostrar fechas",
+"fr": "Afficher les dates",
+"pt-PT": "Mostrar datas"
+},
+"default": true
+},
+{
+"type": "header",
+"content": {
+"en": "Sidebar",
+"de": "Seitenleiste",
+"es": "Barra lateral",
+"fr": "Barre latérale",
+"pt-PT": "Barra lateral"
+}
+},
+{
+"type": "image_picker",
+"id": "blog-sidebar-image",
+"label": {
+"en": "Image",
+"de": "Seitenleisten-Bild",
+"es": "Imagen de la barra lateral",
+"fr": "Image de la barre latérale",
+"pt-PT": "Imagem da barra lateral"
+}
+},
+{
+"type": "url",
+"id": "blog-sidebar-link",
+"label": {
+"en": "Link",
+"de": "Link",
+"es": "Enlace",
+"fr": "Lien",
+"pt-PT": "Ligação"
+}
+},
+{
+"type": "text",
+"id": "blog_sidebar_title",
+"label": {
+"en": "Heading",
+"de": "Seitenleisten-Überschrift",
+"es": "Encabezado de la barra lateral",
+"fr": "Titre de la barre latérale",
+"pt-PT": "Título da barra lateral"
+}
+},
+{
+"type": "richtext",
+"id": "blog_sidebar_desc",
+"label": {
+"en": "Description",
+"de": "Seitenleisten-Beschreibung",
+"es": "Descripción de la barra lateral",
+"fr": "Description de la barre latérale",
+"pt-PT": "Descrição da barra lateral"
+}
+},
+{
+"type": "checkbox",
+"id": "show_blog_tags",
+"label": {
+"en": "Show tags",
+"de": "Tags anzeigen",
+"es": "Mostrar etiquetas",
+"fr": "Afficher les étiquettes",
+"pt-PT": "Mostrar etiquetas"
+},
+"default": true
+},
+{
+"type": "checkbox",
+"id": "show_recent_posts",
+"label": {
+"en": "Show latest articles",
+"de": "Neueste Artikel anzeigen",
+"es": "Mostar Últimos artículos",
+"fr": "Afficher les Derniers articles",
+"pt-PT": "Mostrar Artigos mais recentes"
+}
+}
+],
+"blocks": [
+{
+"name": "Social media",
+"type": "social-sharing",
+"limit": 1,
+"settings": [
+{
+"type": "checkbox",
+"id": "social_sharing_facebook",
+"label": {
+"en": "Facebook",
+"de": "Facebook",
+"es": "Facebook",
+"fr": "Facebook",
+"pt-PT": "Facebook"
+},
+"default": true
+},
+{
+"type": "checkbox",
+"id": "social_sharing_twitter",
+"label": {
+"en": "Twitter",
+"de": "Twitter",
+"es": "Twitter",
+"fr": "Twitter",
+"pt-PT": "Twitter"
+},
+"default": true
+},
+{
+"type": "checkbox",
+"id": "social_sharing_pinterest",
+"label": {
+"en": "Pinterest",
+"de": "Pinterest",
+"es": "Pinterest",
+"fr": "Pinterest",
+"pt-PT": "Pinterest"
+},
+"default": true
+}
+]
+}
+]
+}
+{% endschema %}

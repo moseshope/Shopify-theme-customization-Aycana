@@ -1,0 +1,71 @@
+{%- capture search_types -%}
+  {%- if settings.enable-product-results -%}product,{%- endif -%}
+  {%- if settings.enable-page-results -%}page,{%- endif -%}
+  {%- if settings.enable-article-results -%}article,{%- endif -%}
+  {%- if settings.enable-collection-results -%}collection{%- endif -%}
+{%- endcapture -%}
+
+<div
+  id="top-search-wrapper"
+  role="dialog"
+  aria-labelledby="search_label"
+  aria-modal="true"
+  aria-hidden="true"
+>
+	<div class="top-search">
+		<form id="search-page-form" action="{{ routes.search_url }}">
+      <input type="hidden" name="type" value="{{ search_types }}" />
+			<div id="search-wrapper">
+        <div class="search-bar--controls">
+          <button
+            id="search_submit"
+            type="submit"
+            aria-label="{{ 'general.search.search_submit' | t }}"
+            aria-hidden="true"
+            tabindex="-1"
+            class="search-bar__button alt-focus"
+          >
+            <i data-feather="search"></i>
+          </button>
+        </div>
+
+        <label for="search_text" class="sr-only" id="search_label">{{ 'general.search.title' | t }} {{ shop.name}}</label>
+
+				<input
+          id="search_text"
+          name="q"
+          type="text"
+          size="20"
+          placeholder="{{ 'layout.header.search' | t }}..."
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
+          class="{% if settings.predictive_search_enabled %}is-predictive{% else %}not-predictive{% endif %}"
+          data-search-types="{{ search_types }}"
+          data-show-prices="{{ settings.predictive_search_show_price }}"
+          data-show-vendor="{{ settings.predictive_search_show_vendor }}"
+          aria-hidden="true"
+          tabindex="-1"
+        />
+
+        <button
+          class="search-bar__button search-clear alt-focus"
+          id="search-bar--clear"
+          tabindex="-1"
+          aria-hidden="true"
+          aria-label="{{ 'general.search.close_search' | t }}"
+          type="button"
+        >
+          <i data-feather="x"></i>
+        </button>
+			</div>
+		</form>
+	</div>
+  {% if settings.predictive_search_enabled %}
+  <div class="predictive-loading hide">
+    <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw js"></i><span class="sr-only">{{ 'collections.paginate.loading' | t }}</span>
+  </div>
+  <div class="search-summary"></div>
+  <div class="search-results-panel"></div>
+  {% endif %}
+</div>

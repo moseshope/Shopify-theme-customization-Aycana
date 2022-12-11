@@ -1,0 +1,258 @@
+{{ 'section-collection-list.min.css' | asset_url | stylesheet_tag }}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+  <div class="container">
+    <div class="row">
+      <div class="page-width col-md-12">
+
+        {% if section.settings.title != blank or section.settings.subheading != blank %}
+          <div class="title-bar custom-font">
+            {% if section.settings.subheading != blank %}
+              <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.subheading != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+            {% endif %}
+            {% if section.settings.title != blank %}
+              <h2 class="wow fadeIn{% if section.settings.title != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="collection-grid">
+          <div class="row">
+            {% for block in section.blocks limit: section.blocks.size %}
+              <article class="indiv-collection-grid-homepage wow fadeInUp col-md
+                {% case section.blocks.size %}
+                  {% when 2 %}
+                    {% cycle 'mobileCycle': ' alpha', ' omega' %}
+                    {% cycle 'animDelay': '', 'delay-1' %}
+                  {% when 3 %}
+                    {% cycle 'mobileCycle': ' alpha', '', ' omega' %}
+                    {% cycle 'animDelay': '', 'delay-1', 'delay-2' %}
+                  {% when 4 %}
+                    {% cycle 'mobileCycle': ' alpha', '', '', ' omega' %}
+                    {% cycle 'animDelay': '', 'delay-1', 'delay-2', 'delay-3' %}
+                {% endcase %}
+
+                " {{ block.shopify_attributes }}>
+                  {%- assign collection = collections[block.settings.collection] -%}
+
+                {%- assign image_size = '600x' -%}
+
+                <div class="homepage-collection-grid-inner">
+                  <div class="grid-image">
+                    <div class="grid-image--centered">
+                      {% if collection == empty %}
+                        {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                        {{ 'collection-' | append: current | placeholder_svg_tag: 'icon--placeholder' }}
+                      {% else %}
+                        {% if collection.image %}
+                          {% render 'responsive-image' with collection, alt: collection.image.alt %}
+                          {% else %}
+                          {% assign product = collection.products | first %}
+                          {% render 'responsive-image' with product.media[0].preview_image, alt: product.featured_image.alt %}
+                        {% endif %}
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hp-title homepage-collection-link">
+                {% if collection == empty %}
+                  <h3 class="type-subheading type-subheading--1">
+                    <a href="#">{{ 'general.onboarding.collection_title' | t }}</a>
+                  </h3>
+                {% else %}
+                  <h3 class="type-subheading type-subheading--1">
+                    <a href="{{ collection.url }}">{{ collection.title }}</a>
+                  </h3>
+                {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if section.blocks.size == 0 %}
+          <div class="placeholder-noblocks">
+            {{ 'general.onboarding.no_content' | t }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+    "name": {
+        "en": "Collection list",
+        "de": "Kollektionsliste",
+        "es": "Lista de colecciones",
+        "fr": "Liste des collections",
+        "pt-PT": "Lista da coleção"
+    },
+    "class": "homepage-section--featured-collections-wrapper wow fadeIn",
+    "max_blocks": 12,
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "white",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "White",
+                        "de": "Weiß",
+                        "es": "Blanco",
+                        "fr": "Blanc",
+                        "pt-PT": "Branco"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ],
+            "info": {
+                "en": "Set your color schemes in 'Theme settings' > 'Colors'",
+                "de": "Legen Sie Ihre Farbschemata in 'Themeneinstellungen' > 'Farben' fest",
+                "es": "Configurar las combinaciones de color en 'Configuración del tema' > 'Colores'",
+                "fr": "Définissez vos jeux de couleurs dans « Paramètres du thème » > « Couleurs »",
+                "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
+            }
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": {
+            "en": "Subheading",
+            "de": "Unterüberschrift",
+            "es": "Subencabezado",
+            "fr": "Sous-rubrique",
+            "pt-PT": "Subtítulo"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "en": "Heading",
+            "de": "Überschrift",
+            "es": "Encabezado",
+            "fr": "Rubrique",
+            "pt-PT": "Título"
+          }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "featured_collection",
+            "name": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            },
+            "limit": 6,
+            "settings": [
+                {
+                    "label": {
+                        "en": "Collection",
+                        "de": "Kollektion",
+                        "es": "Colección",
+                        "fr": "Collection",
+                        "pt-PT": "Coleção"
+                    },
+                      "id": "collection",
+                      "type": "collection"
+                    }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Collection list",
+                "de": "Kollektionsliste",
+                "es": "Lista de colecciones",
+                "fr": "Liste des collections",
+                "pt-PT": "Lista da coleção"
+            },
+            "category": {
+                "en": "Collection",
+                "de": "Kollektion",
+                "es": "Colección",
+                "fr": "Collection",
+                "pt-PT": "Coleção"
+            },
+            "blocks": [
+                {
+                    "type": "featured_collection"
+                },
+                {
+                    "type": "featured_collection"
+                },
+                {
+                    "type": "featured_collection"
+                }
+            ]
+        }
+    ],
+    "templates": [
+        "index",
+        "collection",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

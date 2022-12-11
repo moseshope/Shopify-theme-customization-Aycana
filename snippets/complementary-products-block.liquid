@@ -1,0 +1,109 @@
+{% comment %}
+  Renders a "complementary products" block that displays complementary products based on Shopify's Search & Discovery app.
+
+  Accepts:
+  - block_settings: {Object} eg. block.settings
+
+  Usage:
+    {% render 'complementary-products-block' with block_settings: block.settings %}
+{% endcomment %}
+
+<style>
+  {% if block_settings.complementary_block_bg != settings.bg_color %}
+    div[data-aid="complementary-products-block"].complementary-complementary-cross-sells-wrapper {
+      padding: 16px;
+    }
+
+    @media (max-width: 768px) {
+      div[data-aid="complementary-products-block"] .product-description-header {
+        margin-top: 0;
+      }
+    }
+  {% endif %}
+
+  div[data-aid="complementary-products-block"].complementary-complementary-cross-sells-wrapper {
+    padding-bottom: 16px;
+    margin-bottom: 10px;
+  }
+
+  .complementary-cross-sells-wrapper .product-description-header {
+    margin-bottom: 0;
+  }
+
+  .swiper-controls {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .swiper-controls .swiper-pagination.swiper-pagination-fraction {
+    position: relative;
+    bottom: unset;
+  }
+
+  .comp_products_swiper .swiper-slide.swiper-slide-active {
+    padding: 0;
+  }
+
+  .comp_products_swiper .thumbs-direction-nav--next.swiper-button-disabled,
+  .comp_products_swiper .thumbs-direction-nav--prev.swiper-button-disabled {
+    opacity: 0.2;
+  }
+
+  .comp_products_swiper span.thumbs-direction-nav--next,
+  .comp_products_swiper span.thumbs-direction-nav--prev {
+    padding: 12px;
+    cursor: pointer;
+  }
+</style>
+
+<div data-aid="complementary-products-block" class="hidden complementary-complementary-cross-sells-wrapper" style="background-color: {{ block_settings.complementary_block_bg }};" data-cart-action="{{ settings.cart-type }}">
+  {% if block_settings.title != blank %}
+    <h5 class="label custom-font product-description-header">
+      {{ block_settings.title }}
+    </h5>
+  {% endif %}
+
+  <complementary-products
+    data-aid="complementary-product-recommendations"
+    data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ block_settings.products_to_show }}&intent=complementary"
+  >
+    {% if recommendations.performed and recommendations.products_count > 0 %}
+      {% assign number_of_slides = recommendations.products_count | plus: 0.0 | divided_by: block_settings.products_per_page | ceil %}
+        <div
+          class="comp_products_swiper swiper-container"
+        >
+            <div class="slides swiper-wrapper">
+              {% for i in (1..number_of_slides) %}
+              <div class="swiper-slide">
+                {% for recommendation in recommendations.products limit: block_settings.products_per_page offset: continue %}
+                  {% render 'complementary-product-card', comp_product: recommendation %}
+                {% endfor %}
+              </div>
+              {% endfor %}
+            </div>
+            {% if number_of_slides > 1 %}
+              <div class="swiper-controls">
+                <div class="thumbs-direction-nav">
+                  <span class="thumbs-direction-nav--prev" href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                  </span>
+                </div>
+
+                <div class="swiper-pagination"></div>
+
+                <div class="thumbs-direction-nav">
+                  <span class="thumbs-direction-nav--next" href="#">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </span>
+                </div>
+              </div>
+            {% endif %}
+        </div>
+    {% endif %}
+  </complementary-products>
+</div>
+
+<script src="{{ 'component-complementary-products.js' | asset_url }}" defer="defer" type="module"></script>

@@ -1,0 +1,35 @@
+{% if section.settings.size_guide_link contains 'policies' %}
+  {% assign policy = true %}
+  {% assign size_guide_handle = section.settings.size_guide_link | split: '/' | last | replace: '-', '_' %}
+{% else %}
+  {% assign size_guide_handle = section.settings.size_guide_link | split: '/' | last %}
+  {% assign policy = false %}
+{% endif %}
+
+<div class="size-guide__container">
+  <div class="size-guide__background">
+    <div id="size-guide__prompt" class="modal__prompt" role="dialog">
+      <a class="size-guide__close-btn" tabindex="-1" aria-label="Close {{ section.settings.size_guide_message }}">
+				<span>
+					<i data-feather="x"></i>
+				</span>
+			</a>
+      <div class="modal-initial-content">
+        <div id="size-guide__content" class="modal-content__wrapper" tabindex="-1" aria-label="{{ section.settings.size_guide_message }}">
+            <h3>
+              {% if policy %}
+                {{ shop[size_guide_handle].title }}
+              {% else %}
+                {{ pages[size_guide_handle].title }}
+              {% endif %}
+            </h3>
+              {% if policy %}
+                {{ shop[size_guide_handle].body }}
+              {% else %}
+                {{ pages[size_guide_handle].content }}
+              {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

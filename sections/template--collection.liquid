@@ -1,0 +1,252 @@
+{%- assign limit = section.settings.grid | times: section.settings.rows -%}
+{% paginate collection.products by limit %}
+<div id="CollectionProductGrid" data-section-id="{{ section.id }}" data-wetheme-section-type="template--collection" data-wetheme-section-id="{{ section.id }}">
+    <div class="page-width" id="Collection">
+        {%- assign is_empty_collection = false -%}
+        {% case section.settings.grid %}
+            {% when 2 %}
+            {%- assign grid_item_width = 'two-col-grid' -%}
+            {%- assign grid_image_width = '600x600' -%}
+            {% when 3 %}
+            {%- assign grid_item_width = 'three-col-grid' -%}
+            {%- assign grid_image_width = '600x600' -%}
+            {% when 4 %}
+            {%- assign grid_item_width = 'four-col-grid' -%}
+            {%- assign grid_image_width = '600x600' -%}
+                {% when 5 %}
+                {%- assign grid_item_width = 'five-col-grid' -%}
+            {%- assign grid_image_width = '600x600' -%}
+                {% when 6 %}
+            {%- assign grid_item_width = 'six-col-grid' -%}
+            {%- assign grid_image_width = '600x600' -%}
+        {% endcase %}
+        {%- capture olclasses -%}
+            {%- case section.settings.grid -%}
+                {%- when 2 -%}
+                    {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', ' omega' %} wow fadeInUp {% cycle 'animDelay': '', 'delay-1' %}
+                {%- when 3 -%}
+                    {% cycle 'mobileCycle': ' alpha mobile-clear', '', ' mobile-clear omega', 'alpha', ' mobile-clear', ' omega' %} wow fadeInUp {% cycle 'animDelay': '', 'delay-1', 'delay-2' %}
+                {%- when 4 -%}
+                    {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', ' omega' %} wow fadeInUp {% cycle 'animDelay': '', 'delay-1', 'delay-2', 'delay-3' %}
+                {%- when 5 -%}
+                    {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', '', ' omega mobile-clear tablet-clear', ' alpha', ' mobile-clear tablet-clear', '', ' mobile-clear tablet-clear', ' omega' %} wow fadeInUp {% cycle 'animDelay': '', 'delay-1', 'delay-2', 'delay-3', 'delay-4' %}
+                {%- when 6 -%}
+                    {% cycle 'mobileCycle': ' alpha mobile-clear tablet-clear', '', ' mobile-clear', ' tablet-clear', ' mobile-clear', ' omega' %} wow fadeInUp {% cycle 'animDelay': '', 'delay-1', 'delay-2', 'delay-3', 'delay-4', 'delay-5' %}
+            {%- endcase -%}
+        {%- endcapture -%}
+        <div id="AjaxinateContainer" class="clearfix{% if settings.product-grid != 'natural' %} has-aspect-ratio{% else %} natural-images{% endif %}">
+            <ol class="grid__item product-grid {{ grid_item_width }} indiv-product-wrapper collection-image-anim {{ olclasses }}" data-grid-id="{{section.id}}"
+            id="template--collection">
+                {% for product in collection.products %}
+                    <li>
+                        {%-
+                            render 'product-grid--indiv-product',
+                            liquidObject: product
+                        -%}
+                    </li>
+                {% else %}
+                    {% comment %}
+                    Add default products to help with onboarding for collections/all only.
+                    The onboarding styles and products are only loaded if the
+                    store has no products.
+                    {% endcomment %}
+                    {% if collection.handle == 'all' and collection.all_vendors.size == 0 and collection.all_types.size == 0 %}
+                        {% for i in (1..8) %}
+                            {%- capture alphaclasses -%}
+                                {%- case section.settings.grid -%}
+                                {%- when 2 -%}
+                                    {% cycle 'alpha', 'omega' %}
+                                {%- when 3 -%}
+                                    {% cycle ' alpha', '', ' omega' %}
+                                {%- when 4 -%}
+                                    {% cycle ' alpha', '', '', ' omega' %}
+                                {%- when 5 -%}
+                                    {% cycle ' alpha', '', '', '', ' omega' %}
+                                {%- when 6 -%}
+                                    {% cycle ' alpha', '', '', '', '', ' omega' %}
+                                {%- endcase -%}
+                            {%- endcapture -%}
+                            <div class="grid__item {{ grid_item_width }} indiv-product-wrapper {{ alphaclasses }}">
+                                {% render 'product-grid--onboarding' %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {%- assign is_empty_collection = true -%}
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </div>
+        {% if is_empty_collection %}
+        <div class="grid__item small--text-center">
+            <p class="text-center">{{ 'collections.general.no_matches' | t }}</p>
+        </div>
+        {% endif %}
+        {% if paginate.pages > 1 %}
+            <div class="collection-pagination justify-content-center">
+                {% if section.settings.pagination_type == 'paged_navigation' %}
+                {% render 'pagination', paginate: paginate  %}
+                {% elsif section.settings.pagination_type == 'infinite_scrolling' %}
+                <div id="AjaxinateInfiniteScrolling">
+                    {% if paginate.next %}
+                    <a href="{{ paginate.next.url }}">{{ 'collections.paginate.infinite_scrolling' | t }}</a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div id="AjaxinateLoadMore">
+                    {% if paginate.next %}
+                    <a class="btn" href="{{ paginate.next.url }}">{{ 'collections.paginate.load_more' | t }}</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endpaginate %}
+{% if has_collection_image %}
+	<style>
+	#main-navigation-wrapper{
+		margin-bottom: 0px;
+	}
+	</style>
+{% endif %}
+
+<style>
+    
+</style>
+{% schema %}
+{
+    "name": {
+        "en": "Collection grid"
+    },
+    "class": "collection-grid-wrapper",
+    "settings": [
+        {
+            "type": "range",
+            "id": "grid",
+            "min": 2,
+            "max": 6,
+            "step": 1,
+            "label": {
+                "en": "Products per row",
+                "de": "Produkte pro Zeile",
+                "es": "Productos por fila",
+                "fr": "Produits par ligne",
+                "pt-PT": "Produtos por linha"
+            },
+            "default": 4
+        },
+        {
+            "type": "range",
+            "id": "rows",
+            "min": 3,
+            "max": 8,
+            "step": 1,
+            "label": {
+                "en": "Rows per page",
+                "de": "Zeilen pro Seite",
+                "es": "Filas por página",
+                "fr": "Nombre de lignes par page",
+                "pt-PT": "Linhas por página"
+            },
+            "default": 3
+        },
+        {
+            "type": "header",
+            "content": {
+                "en": "Pagination"
+            }
+        },
+        {
+            "type": "select",
+            "id": "pagination_type",
+            "label": {
+                "en": "Pagination type",
+                "de": "Seitenzählungsart",
+                "es": "Tipo de paginación",
+                "fr": "Type de pagination",
+                "pt-PT": "Tipo de paginação"
+            },
+            "default": "paged_navigation",
+            "options": [
+                {
+                    "value": "paged_navigation",
+                    "label": {
+                        "en": "Paged navigation",
+                        "de": "Seitennummerierte Navigation",
+                        "es": "Navegación por páginas",
+                        "fr": "Navigation paginée",
+                        "pt-PT": "Navegação paginada"
+                    }
+                },
+                {
+                    "value": "infinite_scrolling",
+                    "label": {
+                        "en": "Infinite scrolling",
+                        "de": "Unendliches Scrolling",
+                        "es": "Desplazamiento continuo",
+                        "fr": "Défilé infini",
+                        "pt-PT": "Rolagem infinita"
+                    }
+                },
+                {
+                    "value": "load_more",
+                    "label": {
+                        "en": "Load more button",
+                        "de": "Schaltfläche 'Mehr anzeigen'",
+                        "es": "Cargar más botones",
+                        "fr": "Bouton Charger plus",
+                        "pt-PT": "Carregar mais botão"
+                    }
+                }
+            ]
+        }
+    ],
+    "blocks": [
+        {
+            "name": "Grid card vendor",
+            "type": "grid-card-vendor",
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "paragraph",
+                    "content": "This block determines the position of the product grid item vendor."
+                }
+            ]
+        },
+        {
+            "name": "Grid card heading",
+            "type": "grid-card-title",
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "paragraph",
+                    "content": "This block determines the position of the product grid item heading."
+                }
+            ]
+        },
+        {
+            "name": "Grid card price",
+            "type": "grid-card-price",
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "paragraph",
+                    "content": "This block determines the position of the product grid item price."
+                }
+            ]
+        },
+        {
+            "name": "Grid card swatches",
+            "type": "grid-card-swatches",
+            "limit": 1,
+            "settings": [
+                {
+                    "type": "paragraph",
+                    "content": "This block determines the position of the product grid item swatches."
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,318 @@
+{{ 'section-image-gallery.min.css' | asset_url | stylesheet_tag }}
+
+{% case section.settings.colors %}
+  {% when 'white' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--white">
+  {% when 'light' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--light">
+  {% when 'accent' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+  {% when 'dark' %}
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+{% endcase %}
+
+  <div class="container">
+
+    {% if section.settings.title != blank or section.settings.subheading != blank %}
+      <div class="title-bar custom-font">
+        {% if section.settings.subheading != blank %}
+          <h3 class="type-subheading type-subheading--1 wow fadeIn{% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+        {% endif %}
+        {% if section.settings.title != blank %}
+          <h2 class="wow fadeIn{% if section.settings.subheading != blank %} delay-1{% endif %}">{{ section.settings.title | escape }}</h2>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="row image-bar">
+      {% for block in section.blocks %}
+
+        {% case section.blocks.size %}
+          {% when 1 %}
+            {%- assign column_size = 'col-sm-12 col-md-12 image-bar--single-image image-bar--single-column-mobile' -%}
+          {% when 2 %}
+            {%- assign column_size = ' col-12 col-sm-6 col-md-6' -%}
+          {% when 3 %}
+            {%- assign column_size = 'col-sm-12 col-md-4 image-bar--single-column-mobile' -%}
+          {% else %}
+            {%- assign column_size = 'col-sm-12 col-md-3 image-bar--single-column-mobile' -%}
+        {% endcase %}
+
+        <div class="grid__item {{ column_size }}
+
+        wow fadeInUp {% cycle 'animDelay': '', 'delay-1', 'delay-2', 'delay-3' %}
+
+        " {{ block.shopify_attributes }}>
+          {% if block.settings.link != blank %}
+            <a 
+              href="{{ block.settings.link }}"
+              aria-label="{{ block.settings.link | split: '/' | last | replace: '-', ' ' | capitalize }}"
+            >
+          {% else %}
+            <div class="image-bar__item">
+          {% endif %}
+
+          <div class="image-bar__content">
+
+            {% if block.settings.image == blank %}
+                {{ 'image' | placeholder_svg_tag: 'icon--placeholder' }}
+            {% else %}
+              {% render 'responsive-image' with block.settings.image, alt: block.settings.image.alt %}
+            {% endif %}
+          </div>
+
+          {% if block.settings.link != blank %}
+            </a>
+          {% else %}
+            </div>
+          {% endif %}
+
+          {% if block.settings.title != '' %}
+            <h3 class="type-subheading type-subheading--1 image-bar--title">{{ block.settings.title }}</h4>
+          {% endif %}
+
+          {% if block.settings.description != '' %}
+            <div class="image-bar--description">{{ block.settings.description }}</div>
+          {% endif %}
+
+        </div>
+
+      {% endfor %}
+
+      {% if section.blocks.size == 0 %}
+        <div class="placeholder-noblocks">
+          {{ 'general.onboarding.no_content' | t }}
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</section>
+
+{% schema %}
+{
+    "name": {
+        "en": "Gallery",
+        "de": "Galerie",
+        "es": "Galería",
+        "fr": "Galerie",
+        "pt-PT": "Galeria"
+    },
+    "class": "homepage-section--image-gallery-wrapper",
+    "max_blocks": 4,
+    "settings": [
+        {
+            "type": "select",
+            "id": "colors",
+            "label": {
+                "en": "Color scheme",
+                "de": "Farbschema",
+                "es": "Esquema de colores",
+                "fr": "Palette de couleurs",
+                "pt-PT": "Esquema de cores"
+            },
+            "default": "white",
+            "options": [
+                {
+                    "value": "white",
+                    "label": {
+                        "en": "White",
+                        "de": "Weiß",
+                        "es": "Blanco",
+                        "fr": "Blanc",
+                        "pt-PT": "Branco"
+                    }
+                },
+                {
+                    "value": "light",
+                    "label": {
+                        "en": "Light",
+                        "de": "Licht",
+                        "es": "Luz",
+                        "fr": "Clair",
+                        "pt-PT": "Claro"
+                    }
+                },
+                {
+                    "value": "accent",
+                    "label": {
+                        "en": "Feature",
+                        "de": "Eigenschaft",
+                        "es": "Destacado",
+                        "fr": "Caractéristique",
+                        "pt-PT": "Funcionalidade"
+                    }
+                },
+                {
+                    "value": "dark",
+                    "label": {
+                        "en": "Dark",
+                        "de": "Dunkel",
+                        "es": "Oscuro",
+                        "fr": "Foncé",
+                        "pt-PT": "Escuro"
+                    }
+                }
+            ],
+            "info": {
+                "en": "Set your color schemes in 'Theme settings' > 'Colors'",
+                "de": "Legen Sie Ihre Farbschemata in 'Themeneinstellungen' > 'Farben' fest",
+                "es": "Configurar las combinaciones de color en 'Configuración del tema' > 'Colores'",
+                "fr": "Définissez vos jeux de couleurs dans « Paramètres du thème » > « Couleurs »",
+                "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
+            }
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": {
+            "en": "Subheading",
+            "de": "Unterüberschrift",
+            "es": "Subencabezado",
+            "fr": "Sous-rubrique",
+            "pt-PT": "Subtítulo"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+              "en": "Heading",
+              "de": "Überschrift",
+              "es": "Encabezado",
+              "fr": "Rubrique",
+              "pt-PT": "Título"
+          }
+        }
+    ],
+    "blocks": [
+        {
+            "type": "image",
+            "name": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            },
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": {
+                        "en": "Image",
+                        "de": "Bild",
+                        "es": "Imagen",
+                        "fr": "Image",
+                        "pt-PT": "Imagem"
+                    },
+                    "info": {
+                        "en": "1000 x 525px recommended",
+                        "de": "1000 x 525 px empfohlen",
+                        "es": "Recomendado 1000 x 525 px",
+                        "fr": "1000 x 525 px recommandé",
+                        "pt-PT": "1000 x 525px, recomendado"
+                    }
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": {
+                        "en": "Link",
+                        "de": "Link",
+                        "es": "Enlace",
+                        "fr": "Lien",
+                        "pt-PT": "Ligação"
+                    },
+                    "info": {
+                        "en": "Optional",
+                        "de": "Optional",
+                        "es": "Opcional",
+                        "fr": "Facultatif",
+                        "pt-PT": "Opcional"
+                    }
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": {
+                        "en": "Heading",
+                        "de": "Überschrift",
+                        "es": "Encabezado",
+                        "fr": "Rubrique",
+                        "pt-PT": "Título"
+                    },
+                    "info": {
+                        "en": "Optional",
+                        "de": "Optional",
+                        "es": "Opcional",
+                        "fr": "Facultatif",
+                        "pt-PT": "Opcional"
+                    }
+                },
+                {
+                    "type": "richtext",
+                    "id": "description",
+                    "label": {
+                        "en": "Description",
+                        "de": "Beschreibung",
+                        "es": "Descripción",
+                        "fr": "Description",
+                        "pt-PT": "Descrição"
+                    },
+                    "info": {
+                        "en": "Optional",
+                        "de": "Optional",
+                        "es": "Opcional",
+                        "fr": "Facultatif",
+                        "pt-PT": "Opcional"
+                    }
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Gallery",
+                "de": "Galerie",
+                "es": "Galería",
+                "fr": "Galerie",
+                "pt-PT": "Galeria"
+            },
+            "category": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            },
+            "blocks": [
+                {
+                    "type": "image"
+                },
+                {
+                    "type": "image"
+                },
+                {
+                    "type": "image"
+                }
+            ]
+        }
+    ],
+    "templates": [
+        "index",
+        "collection",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

@@ -1,0 +1,17 @@
+<!-- Variant price -->
+<li class="product-page--pricing--variant-price">
+  <span class="js" id="price-field">
+    {% if pick_an_option %}
+      <span class="type-subheading">{{ 'products.product.make_a_selection' | t }}</span>
+    {% else %}
+      <span class="money">{{ current_variant.price | money }}</span>
+    {% endif %}
+  </span>
+</li>
+
+<!-- Variant 'compare at' price -->
+<li class="product-page--pricing--variant-compare-at-price">
+  <span class="compare-at-price js{% unless on_sale %} hide{% endunless %}">
+    <span class="money">{{ current_variant.compare_at_price | money }}</span>
+  </span>
+</li>

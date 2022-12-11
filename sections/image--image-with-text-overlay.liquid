@@ -1,0 +1,409 @@
+{{ 'section-image-with-text-overlay.min.css' | asset_url | stylesheet_tag }}
+
+<style>
+{% if section.settings.image != blank %}
+  {% capture selector %}.hero--{{ section.id }} .img{% endcapture %}
+  {% if section.settings.parallax %}{% assign scale = 2 %}{% else %}{% assign scale = 1 %}{% endif %}
+  {% render 'responsive-background-image' with section.settings.image, selector: selector, scale: scale %}
+{% endif %}
+
+.hero--{{ section.id }} .img {
+    background-position: {{ section.settings.alignment }};
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+{% if section.settings.parallax %}
+.hero--{{ section.id }},
+.hero--{{ section.id }} .parallax-wrapper {
+    overflow: hidden;
+}
+
+.hero--{{ section.id }} .parallax {
+    background-color: var(--color-image-overlay);
+    bottom: 0;
+    content: "";
+    left: 0;
+    opacity: var(--image-overlay-opacity);
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.img .icon--placeholder {
+    height: 1100px;
+}
+
+.hero--{{ section.id }} .img {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 200%;
+    background-size: cover;
+    -webkit-transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-50%, 0, 0);
+    will-change: transform;
+}
+
+@media screen and (max-width: 767px) {
+    .hero--{{ section.id }} .img {
+    min-height: 100%;
+    }
+}
+{% endif %}
+
+</style>
+
+<div
+    class="container{% if section.settings.text-over-image-width == 'full-width' %}-fluid homepage-slider-container{% endif %}"
+    data-wetheme-section-type="image--image-with-text-overlay"
+    data-wetheme-section-id="{{ section.id }}"
+>
+    <div class="row">
+        <div class="page-width col-md-12">
+    		<div class="index-section index-section--flush parallax-wrapper">
+    		  <div class="hero hero--{{ section.id }} hero--{{ section.settings.hero_size }}{% if section.settings.parallax %} parallax{% endif %} wow fadeIn">
+    		    {% if section.settings.image == blank %}
+    		      <div class="placeholder-background img">
+    			      {{ 'lifestyle-1' | placeholder_svg_tag: 'icon--placeholder' }}
+    		      </div>
+            {% else %}
+              <div class="img"></div>
+    		    {% endif %}
+
+    		    <div class="hero__inner wow fadeInUp">
+    		      <div class="page-width text-center">
+                {% if section.settings.title != blank or section.settings.subheading != blank %}
+                  <div class="title-bar custom-font">
+                    {% if section.settings.subheading != blank %}
+                      <h3 class="type-subheading type-subheading--1 {% if section.settings.title != blank %} typography--padding-bottom{% endif %}">{{ section.settings.subheading | escape }}</h3>
+                    {% endif %}
+                    {% if section.settings.title != blank %}
+                      <h2>{{ section.settings.title | escape }}</h2>
+                    {% endif %}
+                  </div>
+                {% endif %}
+    		        {% if section.settings.text != blank %}
+    		          <div class="hero__text textarea rte">{{ section.settings.text }}</div>
+    		        {% endif %}
+    		        {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+    		          <div>
+                    <a href="{{ section.settings.button_link }}" class="btn">
+      		            {{ section.settings.button_label }}
+      		          </a>
+                  </div>
+    		        {% endif %}
+    		      </div>
+    		    </div>
+    		  </div>
+    		</div>
+    	</div>
+    </div>
+  </div>
+
+{% schema %}
+{
+    "name": {
+        "en": "Image with text overlay",
+        "de": "Bild mit Textüberlagerung",
+        "es": "Imagen con texto superpuesto",
+        "fr": "Image avec texte superposé",
+        "pt-PT": "Imagem com sobreposição de texto"
+    },
+    "class": "homepage-section--text-over-image-wrapper",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            },
+            "info": {
+                "en": "1800 x 1200px recommended",
+                "de": "1800 x 1200 px empfohlen",
+                "es": "Recomendado 1800 x 1200 px",
+                "fr": "1800 x 1200 px recommandé",
+                "pt-PT": "1800 x 1200px, recomendado"
+            }
+        },
+        {
+            "type": "text",
+            "id": "subheading",
+            "label": {
+              "en": "Subheading",
+              "de": "Unterüberschrift",
+              "es": "Subencabezado",
+              "fr": "Sous-rubrique",
+              "pt-PT": "Subtítulo"
+            }
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": {
+                "en": "Heading",
+                "de": "Überschrift",
+                "es": "Encabezado",
+                "fr": "Rubrique",
+                "pt-PT": "Título"
+            },
+            "default": {
+                "en": "Share your story",
+                "de": "Teilen Sie Ihre Geschichte",
+                "es": "Comparte tu historia",
+                "fr": "Partagez votre histoire",
+                "pt-PT": "Partilhe a sua história"
+            }
+        },
+        {
+            "type": "textarea",
+            "id": "text",
+            "label": {
+                "en": "Text",
+                "de": "Text",
+                "es": "Texto",
+                "fr": "Texte",
+                "pt-PT": "Texto"
+            },
+            "default": {
+                "en": "Here's your chance to make a great first impression",
+                "de": "Hier ist Ihre Chance, einen großartigen ersten Eindruck zu hinterlassen",
+                "es": "Esta es tu oportunidad de causar una buena primera impresión",
+                "fr": "C'est le moment ou jamais de faire une excellente première impression",
+                "pt-PT": "Aqui está a sua oportunidade de causar uma excelente primeira impressão"
+            }
+        },
+        {
+            "type": "checkbox",
+            "id": "parallax",
+            "label": {
+                "en": "Enable parallax effect",
+                "de": "Parallaxeneffekt aktivieren",
+                "es": "Habilitar efecto de paralaje",
+                "fr": "Activer l'effet parallaxe",
+                "pt-PT": "Ativar efeito de paralaxe"
+            },
+            "default": true,
+            "info": {
+                "en": "Landscape images will default to a set alignment to best fit screen",
+                "de": "Bilder im Querformat werden standardmäßig auf beste Anpassung an den Bildschirm ausgerichtet",
+                "es": "Las imágenes en apaisado se cambiarán por defecto a una alineación fija para ajustarse mejor a la pantalla",
+                "fr": "Les images du paysage seront alignées par défaut sur l'écran qui leur convient le mieux",
+                "pt-PT": "As imagens paisagísticas terão um alinhamento predefinido que melhor se adeque ao ecrã"
+            }
+        },
+        {
+            "type": "select",
+            "id": "alignment",
+            "label": {
+                "en": "Image alignment",
+                "de": "Bildausrichtung",
+                "es": "Alineación de la imagen",
+                "fr": "Alignement de l'image",
+                "pt-PT": "Alinhamento da imagem"
+            },
+            "default": "center",
+            "options": [
+                {
+                    "value": "top",
+                    "label": {
+                        "en": "Top",
+                        "de": "Oben",
+                        "es": "Arriba",
+                        "fr": "En haut",
+                        "pt-PT": "Parte superior"
+                    }
+                },
+                {
+                    "value": "center",
+                    "label": {
+                        "en": "Middle",
+                        "de": "Mitte",
+                        "es": "Medio",
+                        "fr": "Au milieu",
+                        "pt-PT": "Centro"
+                    }
+                },
+                {
+                    "value": "bottom",
+                    "label": {
+                        "en": "Bottom",
+                        "de": "Unten",
+                        "es": "Abajo",
+                        "fr": "En bas",
+                        "pt-PT": "Parte inferior"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "hero_size",
+            "label": {
+                "en": "Section height",
+                "de": "Abschnitthöhe",
+                "es": "Altura de la sección",
+                "fr": "Hauteur de section",
+                "pt-PT": "Altura da secção"
+            },
+            "default": "medium",
+            "options": [
+                {
+                    "label": {
+                        "en": "Extra Small",
+                        "de": "Extra klein",
+                        "es": "Muy pequeño",
+                        "fr": "Extra petite",
+                        "pt-PT": "Extra Pequeno"
+                    },
+                    "value": "x-small"
+                },
+                {
+                    "label": {
+                        "en": "Small",
+                        "de": "Klein",
+                        "es": "Pequeño",
+                        "fr": "Petite",
+                        "pt-PT": "Pequeno"
+                    },
+                    "value": "small"
+                },
+                {
+                    "label": {
+                        "en": "Medium",
+                        "de": "Mittel",
+                        "es": "Mediano",
+                        "fr": "Moyenne",
+                        "pt-PT": "Médio"
+                    },
+                    "value": "medium"
+                },
+                {
+                    "label": {
+                        "en": "Large",
+                        "de": "Groß",
+                        "es": "Grande",
+                        "fr": "Grande",
+                        "pt-PT": "Grande"
+                    },
+                    "value": "large"
+                },
+                {
+                    "label": {
+                        "en": "Extra Large",
+                        "de": "Extra groß",
+                        "es": "Muy grande",
+                        "fr": "Extra grande",
+                        "pt-PT": "Extra Grande"
+                    },
+                    "value": "x-large"
+                }
+            ]
+        },
+        {
+            "type": "select",
+            "id": "text-over-image-width",
+            "label": {
+                "en": "Section width",
+                "de": "Abschnittbreite",
+                "es": "Ancho de la sección",
+                "fr": "Largeur de section",
+                "pt-PT": "Largura da secção"
+            },
+            "default": "full-width",
+            "options": [
+                {
+                    "label": {
+                        "en": "Fixed",
+                        "de": "Festgestellt",
+                        "es": "Fijo",
+                        "fr": "Fixe",
+                        "pt-PT": "Fixo"
+                    },
+                    "value": "fixed"
+                },
+                {
+                    "label": {
+                        "en": "Full width",
+                        "de": "Volle Breite",
+                        "es": "Ancho completo",
+                        "fr": "Pleine largeur",
+                        "pt-PT": "Largura total"
+                    },
+                    "value": "full-width"
+                }
+            ]
+        },
+        {
+            "type": "url",
+            "id": "button_link",
+            "label": {
+                "en": "Button link",
+                "de": "Buttonlink",
+                "es": "Enlace del botón",
+                "fr": "Lien du bouton",
+                "pt-PT": "Ligação do botão"
+            },
+            "info": {
+                "en": "Required to show the button",
+                "de": "Notwendig, den Button zu zeigen",
+                "es": "Es necesario mostrar el botón",
+                "fr": "Requis pour afficher le bouton",
+                "pt-PT": "Necessário para exibir o botão"
+            }
+        },
+        {
+            "type": "text",
+            "id": "button_label",
+            "label": {
+                "en": "Button label",
+                "de": "Button-Bezeichnung",
+                "es": "Etiqueta del botón",
+                "fr": "Étiquette du bouton",
+                "pt-PT": "Etiqueta do botão"
+            }
+        }
+    ],
+    "presets": [
+        {
+            "name": {
+                "en": "Image with text overlay",
+                "de": "Bild mit Textüberlagerung",
+                "es": "Imagen con texto superpuesto",
+                "fr": "Image avec texte superposé",
+                "pt-PT": "Imagem com sobreposição de texto"
+            },
+            "category": {
+                "en": "Image",
+                "de": "Bild",
+                "es": "Imagen",
+                "fr": "Image",
+                "pt-PT": "Imagem"
+            }
+        }
+    ],
+    "templates": [
+        "index",
+        "collection",
+        "list-collections",
+        "blog",
+        "article",
+        "page",
+        "password",
+        "404",
+        "cart",
+        "search",
+        "product"
+    ]
+}
+{% endschema %}

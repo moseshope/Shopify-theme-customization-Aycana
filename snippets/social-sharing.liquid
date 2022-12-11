@@ -1,0 +1,50 @@
+{% if block.settings.social_sharing_facebook or
+  block.settings.social_sharing_twitter or
+  block.settings.social_sharing_pinterest %}
+
+{% capture permalinkURL %}{{ shop.url }}{{ product.url }}{% endcapture %}
+{% capture shareTitle %}{{ product.title }}{% endcapture %}
+{% capture shareImage %}{{ product.featured_image | product_img_url: '2000x2000' }}{% endcapture %}
+
+{% if template.name == 'article' %}
+  {% capture permalinkURL %}{{ shop.url }}{{ article.url }}{% endcapture %}
+{% endif %}
+
+<div id="sharing" class="social-sharing" data-permalink="{{ permalinkURL }}" {% if block_attributes %}{{ block_attributes }}{% endif %}>
+
+  {% if block.settings.social_sharing_facebook %}
+  <!-- https://developers.facebook.com/docs/plugins/share-button/ -->
+  <a target="_blank" rel="nopener noreferrer" href="//www.facebook.com/sharer.php?u={{ permalinkURL }}" class="share-facebook">
+     <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 32 32">
+       <path d="M18.56 31.36V17.28h4.48l.64-5.12h-5.12v-3.2c0-1.28.64-2.56 2.56-2.56h2.56V1.28H19.2c-3.84 0-7.04 2.56-7.04 7.04v3.84H7.68v5.12h4.48v14.08h6.4z"></path>
+     </svg>
+     <span class="share-title">Share<span class="sr-only"> on Facebook</span></span>
+  </a>
+  {% endif %}
+
+  {% if block.settings.social_sharing_twitter %}
+  <!-- https://dev.twitter.com/docs/intents -->
+  <a target="_blank" rel="nopener noreferrer" href="//twitter.com/share?url={{ permalinkURL }}&amp;text={{ shareTitle | escape }}" class="share-twitter">
+     <svg aria-hidden="true" focusable="false" role="presentation"  viewBox="0 0 24 24">
+       <path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/>
+     </svg>
+      <span class="share-title">Tweet</span>
+  </a>
+  {% endif %}
+
+  {% if block.settings.social_sharing_pinterest %}
+  <!--
+  https://developers.pinterest.com/pin_it/
+  Pinterest get data from the same Open Graph meta tags Facebook uses
+  -->
+  <a target="_blank" rel="nopener noreferrer" href="//pinterest.com/pin/create/button/?url={{ permalinkURL }}&amp;media={{ shareImage }}&amp;description={{ product.title | escape }}" class="share-pinterest">
+   <svg aria-hidden="true" focusable="false" role="presentation" viewBox="0 0 32 32">
+     <path d="M27.52 9.6c-.64-5.76-6.4-8.32-12.8-7.68-4.48.64-9.6 4.48-9.6 10.24 0 3.2.64 5.76 3.84 6.4 1.28-2.56-.64-3.2-.64-4.48-1.28-7.04 8.32-12.16 13.44-7.04 3.2 3.84 1.28 14.08-4.48 13.44-5.12-1.28 2.56-9.6-1.92-11.52-3.2-1.28-5.12 4.48-3.84 7.04-1.28 4.48-3.2 8.96-1.92 15.36 2.56-1.92 3.84-5.76 4.48-9.6 1.28.64 1.92 1.92 3.84 1.92 6.4-.64 10.24-7.68 9.6-14.08z"></path>
+   </svg>
+   <span class="share-title">Pin it</span>
+  </a>
+  {% endif %}
+
+</div>
+
+{% endif %}

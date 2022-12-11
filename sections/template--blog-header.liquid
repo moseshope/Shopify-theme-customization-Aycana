@@ -1,0 +1,39 @@
+<div class="title-bar custom-font">
+  <h1>{{ blog.title }}</h1>
+  {% if blog.all_tags != blank %}
+    {% for tag in blog.all_tags %}
+    {% if current_tags contains tag %}
+      <h3 class="title-bar-sub">
+          {{ tag }}
+      </h3>
+    {% endif %}
+    {% endfor %}
+  {% endif %}
+  <div class="clear"></div>
+</div>
+
+{% schema %}
+{
+  "name": {
+    "en": "Blog header"
+  },
+  "class": "template--blog_header",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "This block controls the position of the blog title."
+    }
+  ],
+  "presets": [
+    {
+      "name": {
+          "en": "Blog header"
+      },
+      "category": {
+          "en": "Blog"
+      }
+    }
+  ],
+  "templates": ["blog"]
+}
+{% endschema %}
