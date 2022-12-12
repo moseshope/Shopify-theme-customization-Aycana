@@ -2,15 +2,15 @@
 
 {% case section.settings.colors %}
   {% when 'white' %}
-    <section class="homepage-sections-wrapper homepage-sections-wrapper--white"  style="border:1px solid red">
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--white featured-products-section-with-bg">
   {% when 'light' %}
-    <section class="homepage-sections-wrapper homepage-sections-wrapper--light">
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--light featured-products-section-with-bg">
   {% when 'accent' %}
-    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent">
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--accent featured-products-section-with-bg">
   {% when 'dark' %}
-    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark">
+    <section class="homepage-sections-wrapper homepage-sections-wrapper--dark featured-products-section-with-bg">
 {% endcase %}
-
+  <img class="featured-section-left-bg" src="{{ section.settings.featured_products_bg_left | img_url: 'master' }}" />
   <div class="container" data-wetheme-section-type="collection--featured-collection" data-wetheme-section-id="{{ section.id }}">
     <div class="row">
       <div class="page-width col-md-12">
@@ -128,11 +128,12 @@
     </div>
     </div>
   </div>
+  <img class="featured-section-right-bg" src="{{ section.settings.featured_products_bg_right | img_url: 'master' }}" />
 </section>
 
 <style>
   {% case section.settings.colors %}
-    {% when 'white' %}
+    {% when 'white' %}`
       .indiv-product__swatches label {
         border: 1px solid {{ settings.font-color }};
       }
@@ -161,6 +162,35 @@
         border: 2px solid {{ settings.colorSchemeDarkText }};
       }
   {% endcase %}
+  .featured-products-section-with-bg .featured-section-left-bg {
+    width: auto;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+  }
+  .featured-products-section-with-bg .featured-section-right-bg {
+    width: auto;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+  .featured-products-section-with-bg {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+  }
+  @media (max-width: 768px) {
+    .featured-section-left-bg {
+      display: none;
+    }
+    .featured-section-right-bg {
+      display: none;
+    }
+  }
 </style>
 
 {% schema %}
@@ -235,6 +265,16 @@
                 "pt-PT": "Defina os seus esquemas de cor em 'Definições de tema' > 'Cores'"
             }
         },
+        {
+            "type": "image_picker",
+            "id": "featured_products_bg_left",
+            "label": "Select image for left background"
+        },        
+        {
+            "type": "image_picker",
+            "id": "featured_products_bg_right",
+            "label": "Select image for right background"
+        },        
         {
             "type": "text",
             "id": "subheading",
