@@ -1,0 +1,1 @@
+document.getElementById("").addEventListener("click", function(){ alert("Hello World!"); });
