@@ -3,185 +3,193 @@
 <!--[if IE 7 ]><html class="no-js ie ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]><html class="no-js ie ie8" lang="en"> <![endif]-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<html class="no-js" lang="{{ request.locale.iso_code }}">
-<!--<![endif]-->
+  <html class="no-js" lang="{{ request.locale.iso_code }}"> <!--<![endif]-->
 
-<head>
+  <head>
 
-	<meta charset="utf-8">
+    <meta charset="utf-8">
 
-	<!--[if lt IE 9]>
-		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-	{%- comment -%}DemoStoreRequirements{%- endcomment -%}
+    {%- comment -%}DemoStoreRequirements{%- endcomment -%}
 
-	<title>
-		{{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{
-		'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t:
-		page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
-	</title>
+    <title>
+      {{ page_title }}{% if current_tags %}
+        {% assign meta_tags = current_tags | join: ', ' %} &ndash; {{
+		'general.meta.tags' | t: tags: meta_tags }}{% endif %}
+      {% if current_page != 1 %}
+        &ndash; {{ 'general.meta.page' | t:
+		page: current_page }}{% endif %}
+      {% unless page_title contains shop.name %}
+        &ndash; {{ shop.name }}{% endunless %}
+    </title>
 
-	<link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
-	<script type="text/javascript">
-		document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
-	</script>
+    <script type="text/javascript">
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
 
-	{% if page_description %}
-	<meta name="description" content="{{ page_description | escape }}">
-	{% endif %}
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
 
-	{% if template contains 'product' %}
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	{% else %}
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	{% endif %}
+    {% if template contains 'product' %}
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    {% else %}
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% endif %}
 
-	{% render 'social-meta-tags' %}
+    {% render 'social-meta-tags' %}
 
-	<link rel="canonical" href="{{ canonical_url }}" />
+    <link rel="canonical" href="{{ canonical_url }}"/>
 
-	<!-- CSS -->
-	{% render 'css-variables' %}
+    <!-- CSS -->
+    {% render 'css-variables' %}
 
-	{% if template == 'index' %}
-	<link rel="preload" href="{{ 'theme-index.min.css' | asset_url }}" as="style">
-	{{ 'theme-index.min.css' | asset_url | stylesheet_tag }}
-	{% elsif template.name == 'collection' %}
-	<link rel="preload" href="{{ 'theme-collection.min.css' | asset_url }}" as="style">
-	{{ 'theme-collection.min.css' | asset_url | stylesheet_tag }}
-	{% elsif template == 'list-collections' %}
-	<link rel="preload" href="{{ 'theme-collection-list.min.css' | asset_url }}" as="style">
-	{{ 'theme-collection-list.min.css' | asset_url | stylesheet_tag }}
-	{% elsif template.name == 'product' %}
-	<link rel="preload" href="{{ 'theme-product.min.css' | asset_url }}" as="style">
-	{{ 'theme-product.min.css' | asset_url | stylesheet_tag }}
-	{% elsif template.name == 'blog' %}
-	<link rel="preload" href="{{ 'theme-blog.min.css' | asset_url }}" as="style">
-	{{ 'theme-blog.min.css' | asset_url | stylesheet_tag }}
-	{% elsif template == 'cart' %}
-	<link rel="preload" href="{{ 'theme-cart.min.css' | asset_url }}" as="style">
-	{{ 'theme-cart.min.css' | asset_url | stylesheet_tag }}
-	{% else %}
-	<link rel="preload" href="{{ 'theme.min.css' | asset_url }}" as="style">
-	{{ 'theme.min.css' | asset_url | stylesheet_tag }}
-	{% endif %}
+    {% if template == 'index' %}
+      <link rel="preload" href="{{ 'theme-index.min.css' | asset_url }}" as="style">
+      {{ 'theme-index.min.css' | asset_url | stylesheet_tag }}
+    {% elsif template.name == 'collection' %}
+      <link rel="preload" href="{{ 'theme-collection.min.css' | asset_url }}" as="style">
+      {{ 'theme-collection.min.css' | asset_url | stylesheet_tag }}
+    {% elsif template == 'list-collections' %}
+      <link rel="preload" href="{{ 'theme-collection-list.min.css' | asset_url }}" as="style">
+      {{ 'theme-collection-list.min.css' | asset_url | stylesheet_tag }}
+    {% elsif template.name == 'product' %}
+      <link rel="preload" href="{{ 'theme-product.min.css' | asset_url }}" as="style">
+      {{ 'theme-product.min.css' | asset_url | stylesheet_tag }}
+    {% elsif template.name == 'blog' %}
+      <link rel="preload" href="{{ 'theme-blog.min.css' | asset_url }}" as="style">
+      {{ 'theme-blog.min.css' | asset_url | stylesheet_tag }}
+    {% elsif template == 'cart' %}
+      <link rel="preload" href="{{ 'theme-cart.min.css' | asset_url }}" as="style">
+      {{ 'theme-cart.min.css' | asset_url | stylesheet_tag }}
+    {% else %}
+      <link rel="preload" href="{{ 'theme.min.css' | asset_url }}" as="style">
+      {{ 'theme.min.css' | asset_url | stylesheet_tag }}
+    {% endif %}
 
-	{{ 'custom.css' | asset_url | stylesheet_tag }}
+    {{ 'custom.css' | asset_url | stylesheet_tag }}
 
-	{% if settings.type_base_font contains 'Google' %}
-		{%- assign type_body_parts = settings.type_base_font | split: '_' -%}
-		{% capture bodyGoogleUrl %}{{ type_body_parts[1] }}:400,700{% endcapture %}
-		{{ '//fonts.googleapis.com/css?family=' | append: bodyGoogleUrl | stylesheet_tag }}
-	{% endif %}
+    {% if settings.type_base_font contains 'Google' %}
+      {%- assign type_body_parts = settings.type_base_font | split: '_' -%}
+      {% capture bodyGoogleUrl %}
+        {{ type_body_parts[1] }}:400,700{% endcapture %}
+      {{ '//fonts.googleapis.com/css?family=' | append: bodyGoogleUrl | stylesheet_tag }}
+    {% endif %}
 
-	{% if settings.type_header_font contains 'Google' %}
-		{% unless settings.type_header_font contains type_body_parts[1] and settings.type_header_font contains '700' %}
-			{%- assign type_heading_parts = settings.type_header_font | split: '_' -%}
-			{% capture headingGoogleUrl %}{{ type_heading_parts[1] }}:{{ type_heading_parts[2] }}{% endcapture %}
-			{{ '//fonts.googleapis.com/css?family=' | append: headingGoogleUrl | stylesheet_tag }}
-		{% endunless %}
-	{% endif %}
+    {% if settings.type_header_font contains 'Google' %}
+      {% unless settings.type_header_font contains type_body_parts[1] and settings.type_header_font contains '700' %}
+        {%- assign type_heading_parts = settings.type_header_font | split: '_' -%}
+        {% capture headingGoogleUrl %}
+          {{ type_heading_parts[1] }}:{{ type_heading_parts[2] }}{% endcapture %}
+        {{ '//fonts.googleapis.com/css?family=' | append: headingGoogleUrl | stylesheet_tag }}
+      {% endunless %}
+    {% endif %}
 
-	{% if settings.favicon != blank %}
-	<link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
-	{% endif %}
+    {% if settings.favicon != blank %}
+      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+    {% endif %}
 
-	<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml"/>
 
-	{{ content_for_header }}
+    {{ content_for_header }}
 
-	<script type="text/javascript">
-		window.wetheme = {
-			name: 'Envy',
-		};
-	</script>
+    <script type="text/javascript">
+      window.wetheme = {
+        name: 'Envy'
+      };
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 
-	{% if template contains 'customers' %}
-	{{ "shopify_common.js" | shopify_asset_url | script_tag }}
-	{{ "customer_area.js" | shopify_asset_url | script_tag }}
-	{% endif %}
+    {% if template contains 'customers' %}
+      {{ "shopify_common.js" | shopify_asset_url | script_tag }}
+      {{ "customer_area.js" | shopify_asset_url | script_tag }}
+    {% endif %}
 
-	{% if template.name == 'article' %}
-		<script src="{{ 'textSlideshow.js' | asset_url }}" defer="defer"></script>
-	{% endif %}
-  {% render 'judgeme_core' %}
-</head>
+    {% if template.name == 'article' %}
+      <script src="{{ 'textSlideshow.js' | asset_url }}" defer="defer"></script>
+    {% endif %}
+    {% render 'judgeme_core' %}
+  </head>
 
-<body id="{{ page_title | handle }}"
-	class="page-title--{{ page_title | handle }} {% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }} flexbox-wrapper{% unless settings.animations_enabled %} animations-disabled{% endunless %}">
+  <body id="{{ page_title | handle }}" class="page-title--{{ page_title | handle }} {% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }} flexbox-wrapper{% unless settings.animations_enabled %} animations-disabled{% endunless %}">
 
-	{% if template != 'cart' and settings.cart-type == "drawer" %}
-		{% render 'cart-drawer' %}
-	{% endif %}
+    {% if template != 'cart' and settings.cart-type == "drawer" %}
+      {% render 'cart-drawer' %}
+    {% endif %}
 
-	<div id="main-body" class="{% if template == 'search' %} search-template{% elsif template.name == 'collection' %} collection-template{% endif %}" data-editor-open="{{ request.design_mode }}">
-		<div class="no-js disclaimer container">
-			<p>{{ "general.homepage.javascript_disabled" | t }}</p>
-		</div>
+    <div id="main-body" class="{% if template == 'search' %} search-template{% elsif template.name == 'collection' %} collection-template{% endif %}" data-editor-open="{{ request.design_mode }}">
+      <div class="no-js disclaimer container">
+        <p>{{ "general.homepage.javascript_disabled" | t }}</p>
+      </div>
 
-		<div id="slideout-overlay"></div>
+      <div id="slideout-overlay"></div>
 
-		{% section 'announcement-bar' %}
-		{% section 'header' %}
+      {% section 'announcement-bar' %}
+      {% section 'header' %}
 
-		<main id="main">
+      <main id="main">
 
-			{{ content_for_layout }}
+        {{ content_for_layout }}
 
-		</main>
+      </main>
 
-		{% section 'footer' %}
-	</div>
+      {% section 'footer' %}
+    </div>
 
-	{% if settings.enable_verification_popup %}
-		{% render 'verification-popup' %}
-	{% endif %}
+    {% if settings.enable_verification_popup %}
+      {% render 'verification-popup' %}
+    {% endif %}
 
-	{% if settings.popup--enable %}
-		{% render 'popup' %}
-	{% endif %}
+    {% if settings.popup--enable %}
+      {% render 'popup' %}
+    {% endif %}
 
-	<script type="application/json" id="wetheme-global">
-		{
-			{% comment %}Translations that will be used in javascript section handling{% endcomment %}
-			"translations": {
-				"addToCart": {{ 'products.product.add_to_cart' | t | json }},
-				"added": {{ 'products.product.added' | t | json }},
-				"soldOut": {{ 'products.product.sold_out' | t | json }},
-				"unavailable": {{ 'products.product.unavailable' | t | json }},
-				"makeASelection": {{ 'products.product.make_a_selection' | t | json }},
-				"loading": {{ 'collections.paginate.loading' | t | json }},
-				"showMore": {{ 'general.filters.show_more' | t | json }},
-				"showLess": {{ 'general.filters.show_less' | t | json }},
-				"saving": {{ 'products.general.saving' | t | json }},
-				"products": {{ 'general.search.products' | t | json }},
-		        "pages": {{ 'general.search.pages' | t | json }},
-		        "collections": {{ 'general.search.collections' | t | json }},
-		        "articles": {{ 'general.search.articles' | t | json }},
-		        "loading": {{ 'collections.paginate.loading' | t | json }},
-		        "no_results_html": {{ 'general.search.no_results_html' | t | json }},
-		        "view_all": {{ 'general.search.view_all' | t | json }},
-		        "clear": {{ 'general.search.clear' | t | json }},
-		        "cart_title": {{ 'cart.general.title' | t | json }},
-		        "cart_subtotal": {{ 'cart.general.subtotal' | t | json }},
-		        "added_to_cart": {{ 'cart.general.added_to' | t | json }},
-		        "removed_from_cart": {{ 'cart.general.removed_from' | t | json }},
-		        "cart_item": {{ 'cart.general.item' | t | json }},
-		        "slide": {{ 'general.slider.slide' | t | json }},
-		        "pause": {{ 'general.slider.pause' | t | json }},
-		        "search_found": {{ 'general.search.search_found' | t | json }},
-		        "none_found": {{ 'general.search.none_found' | t | json }},
-		        "search_result": {{ 'general.search.search_result' | t | json }},
-		        "search_result_plural": {{ 'general.search.search_result_plural' | t | json }}
-			},
-			"moneyFormat": {{ shop.money_format | json }}
-		}
-	</script>
-	{% render 'structured-data' %}
-  	<script defer type="module" src="{{ 'theme.min.js' | asset_url }}"></script>
-		<script defer nomodule src="{{ 'theme.legacy.min.js' | asset_url }}"></script>
-</body>
+    <script type="application/json" id="wetheme-global">
+      {
+      {% comment %}
+          Translations that will be used in javascript section handling
+        {% endcomment %}
+        "translations": {
+          "addToCart": {{ 'products.product.add_to_cart' | t | json }},
+          "added": {{ 'products.product.added' | t | json }},
+          "soldOut": {{ 'products.product.sold_out' | t | json }},
+          "unavailable": {{ 'products.product.unavailable' | t | json }},
+          "makeASelection": {{ 'products.product.make_a_selection' | t | json }},
+          "loading": {{ 'collections.paginate.loading' | t | json }},
+          "showMore": {{ 'general.filters.show_more' | t | json }},
+          "showLess": {{ 'general.filters.show_less' | t | json }},
+          "saving": {{ 'products.general.saving' | t | json }},
+          "products": {{ 'general.search.products' | t | json }},
+          "pages": {{ 'general.search.pages' | t | json }},
+          "collections": {{ 'general.search.collections' | t | json }},
+          "articles": {{ 'general.search.articles' | t | json }},
+          "loading": {{ 'collections.paginate.loading' | t | json }},
+          "no_results_html": {{ 'general.search.no_results_html' | t | json }},
+          "view_all": {{ 'general.search.view_all' | t | json }},
+          "clear": {{ 'general.search.clear' | t | json }},
+          "cart_title": {{ 'cart.general.title' | t | json }},
+          "cart_subtotal": {{ 'cart.general.subtotal' | t | json }},
+          "added_to_cart": {{ 'cart.general.added_to' | t | json }},
+          "removed_from_cart": {{ 'cart.general.removed_from' | t | json }},
+          "cart_item": {{ 'cart.general.item' | t | json }},
+          "slide": {{ 'general.slider.slide' | t | json }},
+          "pause": {{ 'general.slider.pause' | t | json }},
+          "search_found": {{ 'general.search.search_found' | t | json }},
+          "none_found": {{ 'general.search.none_found' | t | json }},
+          "search_result": {{ 'general.search.search_result' | t | json }},
+          "search_result_plural": {{ 'general.search.search_result_plural' | t | json }}
+        },
+        "moneyFormat": {{ shop.money_format | json }}
+      }
+    </script>
+    {% render 'structured-data' %}
+    <script defer type="module" src="{{ 'theme.min.js' | asset_url }}"></script>
+    <script defer nomodule src="{{ 'theme.legacy.min.js' | asset_url }}"></script>
+  </body>
 
 </html>
