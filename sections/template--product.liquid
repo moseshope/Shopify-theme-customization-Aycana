@@ -86,13 +86,13 @@
 
 {% capture thumbnails %}
   <div class="product-single__thumbnails product-single__thumbnails--{{ section.settings.thumbnail_position }} product-page--thumb-slider
-                          {% if section.settings.thumbnail_position != 'below' %}
-                            {% if product.media.size <= 4 %} no-arrows{% endif %}
-                            vertical col-md-2
-                          {% else %}
-                            {% if product.media.size <= 5 %} no-arrows{% endif %}
-                            horizontal
-                          {% endif %}">
+                                {% if section.settings.thumbnail_position != 'below' %}
+                                  {% if product.media.size <= 4 %} no-arrows{% endif %}
+                                  vertical col-md-2
+                                {% else %}
+                                  {% if product.media.size <= 5 %} no-arrows{% endif %}
+                                  horizontal
+                                {% endif %}">
     {% if settings.sale_badge %}
       <div class="sale-badge mobile product-price__sale-label-{{ section.id }}{% unless on_sale %} hide{% endunless %}">{{ 'products.general.sale' | t }}</div>
     {% endif %}
@@ -573,6 +573,9 @@
     .quentity-and-price .money {
       font-size: 50px;
       font-weight: bold;
+    }
+    ul.product-page--pricing {
+      margin-top: revert;
     }
   </style>
 </div>
