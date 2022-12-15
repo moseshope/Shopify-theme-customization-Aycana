@@ -1,10 +1,102 @@
-<article id="{{page.handle}}" class="page entry container">
-	<header>
-		<div class="title-bar custom-font">
-			<h1 class="main-heading">{{ page.title }}</h1>
-		</div>
-	</header>
-	<section class="entry-content">
-		{{ page.content }}
-	</section>
+<article id="{{page.handle}}" class="page entry article-wrapper-with-bg">
+  <img class="tmp-page-section-left-bg" src="{{ section.settings.tmp_page_bg_left | img_url: 'master' }}" />
+    <div class="container">
+      <header>
+        <div class="title-bar custom-font">
+          <h1 class="main-heading">{{ page.title }}</h1>
+        </div>
+      </header>
+      <section class="entry-content">
+        {{ page.content }}
+      </section>
+    </div>
+  <img class="tmp-page-section-right-bg" src="{{ section.settings.tmp_page_bg_right | img_url: 'master' }}" />
 </article>
+
+<style>
+  .article-wrapper-with-bg .tmp-page-section-left-bg {
+    width: auto;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+  }
+  .article-wrapper-with-bg .tmp-page-section-right-bg {
+    width: auto;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+  .article-wrapper-with-bg {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+  }
+  @media(max-width: 768px) {
+    .article-wrapper-with-bg .tmp-page-section-left-bg {
+      display: none;
+    }
+    .article-wrapper-with-bg .tmp-page-section-right-bg {
+      display: none;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": {
+      "en": "Template page section",
+      "de": "Sjabloon pagina",
+      "es": "Página de plantilla",
+      "fr": "Modèle de page",
+      "pt-PT": "página modelo"
+    },
+    "class": "template-page-section--template-page-wrapper",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "tmp_page_bg_left",
+        "label": "Select image for left background"
+      }, {
+        "type": "image_picker",
+        "id": "tmp_page_bg_right",
+        "label": "Select image for right background"
+      }
+    ],
+    "blocks": [],
+    "presets": [
+      {
+        "name": {
+          "en": "Template page section",
+          "de": "Sjabloon pagina",
+          "es": "Página de plantilla",
+          "fr": "Modèle de page",
+          "pt-PT": "página modelo"
+        },
+        "category": {
+          "en": "Collection",
+          "de": "Kollektion",
+          "es": "Colección",
+          "fr": "Collection",
+          "pt-PT": "Coleção"
+        },
+        "blocks": []
+      }
+    ],
+    "templates": [
+      "index",
+      "list-collections",
+      "blog",
+      "article",
+      "page",
+      "password",
+      "404",
+      "cart",
+      "search",
+      "product"
+    ]
+  }
+{% endschema %}
